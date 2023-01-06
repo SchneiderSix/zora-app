@@ -12,9 +12,29 @@ import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 
+import { useState } from "react";
+import { makeRequest } from "../../axios";
+
+
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
+
+  const [searchInput, setSearchInput] = useState('');
+
+  let nam = '';
+
+  const searchItems = (/*searchValue*/) => {
+    /*setSearchInput(searchValue);*/
+    makeRequest.get("/users/find/name/" + nam)
+    .then(res=> console.log(res.data))
+    .catch(err=> console.log(err));
+  }
+
+
+  makeRequest.get("/users/find/name/test1")
+    .then(res=> console.log(res.data))
+    .catch(err=> console.log(err));
 
   return (
     <div className="navbar">
@@ -30,12 +50,14 @@ const Navbar = () => {
         )}
         <GridViewOutlinedIcon />
         <div className="search">
-          <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
+          <input type="text" placeholder="Search..." onChange={(e) => nam = e.target.value}></input>
+          <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
         </div>
       </div>
       <div className="right">
-        <PersonOutlinedIcon />
+      <Link to={"/profile/" + currentUser.id} style={darkMode ? ({ color: "white" }) : ({ color: "black" })}>
+          <PersonOutlinedIcon />
+        </Link>
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
         <div className="user">
@@ -44,6 +66,9 @@ const Navbar = () => {
             alt=""
           />
           <span>{currentUser.name}</span>
+          <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
+          <span>Logout</span>
+        </Link>
         </div>
       </div>
     </div>

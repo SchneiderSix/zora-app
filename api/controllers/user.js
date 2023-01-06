@@ -12,6 +12,17 @@ export const getUser = (req, res) => {
   });
 };
 
+export const getUserName = (req, res) => {
+  const userName = req.params.userName;
+  const q = "SELECT * FROM users WHERE name=?";
+
+  db.query(q, [userName], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...info } = data[0];
+    return res.json(info);
+  });
+};
+
 export const updateUser = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not authenticated!");
