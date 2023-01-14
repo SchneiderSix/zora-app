@@ -5,7 +5,7 @@ const RightBar = () => {
     <div className="rightBar">
       <div className="container">
         <div className="item">
-          <span>Online Friends</span>
+          <span>Friends</span>
           <div className="user">
             <div className="userInfo">
               <img

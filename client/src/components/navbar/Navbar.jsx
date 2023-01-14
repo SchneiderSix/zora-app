@@ -14,6 +14,7 @@ import { AuthContext } from "../../context/authContext";
 
 import { useState } from "react";
 import { makeRequest } from "../../axios";
+import {useNavigate} from 'react-router-dom';
 
 
 const Navbar = () => {
@@ -21,26 +22,21 @@ const Navbar = () => {
   const { currentUser } = useContext(AuthContext);
 
   const [searchInput, setSearchInput] = useState('');
+  const navi = useNavigate();
 
-  let nam = '';
 
-  const searchItems = (/*searchValue*/) => {
-    /*setSearchInput(searchValue);*/
-    makeRequest.get("/users/find/name/" + nam)
-    .then(res=> console.log(res.data))
-    .catch(err=> console.log(err));
+  const searchItems = () => {
+    makeRequest.get("/users/find/name/" + searchInput)
+    .then(res=> navi("/profile/" + res.data.id))
+    .then(()=> window.location.reload(false))
+    .catch(err=> console.log("User Not Found: " + err));
   }
-
-
-  makeRequest.get("/users/find/name/test1")
-    .then(res=> console.log(res.data))
-    .catch(err=> console.log(err));
 
   return (
     <div className="navbar">
       <div className="left">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <span>Social Media App</span>
+          <span style={darkMode ? ({ color: "white" }) : ({ color: "black" })}>Social Media App</span>
         </Link>
         <HomeOutlinedIcon />
         {darkMode ? (
@@ -50,12 +46,12 @@ const Navbar = () => {
         )}
         <GridViewOutlinedIcon />
         <div className="search">
-          <input type="text" placeholder="Search..." onChange={(e) => nam = e.target.value}></input>
+          <input type="text" placeholder="Search Users..." onChange={(e) => setSearchInput(e.target.value)}></input>
           <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
         </div>
       </div>
       <div className="right">
-      <Link to={"/profile/" + currentUser.id} style={darkMode ? ({ color: "white" }) : ({ color: "black" })}>
+      <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> window.location.reload())}>
           <PersonOutlinedIcon />
         </Link>
         <EmailOutlinedIcon />

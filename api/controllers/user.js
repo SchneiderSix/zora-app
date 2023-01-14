@@ -14,12 +14,15 @@ export const getUser = (req, res) => {
 
 export const getUserName = (req, res) => {
   const userName = req.params.userName;
-  const q = "SELECT * FROM users WHERE name=?";
+  const q = `SELECT * FROM users WHERE name=?`;
 
   db.query(q, [userName], (err, data) => {
-    if (err) return res.status(500).json(err);
-    const { password, ...info } = data[0];
-    return res.json(info);
+    try {
+      const { password, ...info } = data[0];
+      return res.json(info);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   });
 };
 
