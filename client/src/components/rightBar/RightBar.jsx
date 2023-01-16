@@ -1,6 +1,14 @@
 import "./rightBar.scss";
+import { makeRequest } from "../../axios";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+
 
 const RightBar = () => {
+  const { currentUser } = useContext(AuthContext);
+  makeRequest.get("/users/find/friends/" + currentUser.id)
+    .then(res=> console.log(res))
+    .catch(err=> console.log("No Friends: " + err));
   return (
     <div className="rightBar">
       <div className="container">
