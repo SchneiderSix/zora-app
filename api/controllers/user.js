@@ -26,6 +26,17 @@ export const getUserName = (req, res) => {
   });
 };
 
+export const getUserFriends = (req, res) => {
+  const userId = req.params.userId;
+  const q = `SELECT * FROM users AS u LEFT JOIN relationships AS r ON (u.id = r.followedUserId) WHERE r.followedUserId!=?`;
+
+  db.query(q, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...info } = data;
+    return res.json(info);
+  });
+};
+
 export const updateUser = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not authenticated!");
