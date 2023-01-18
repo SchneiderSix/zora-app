@@ -62,7 +62,21 @@ class CommandLine(cmd.Cmd):
   def do_delete(self, args):
     """*** delete row in database
     Usage: delete <table_name> <id>"""
-    pass
+    line = args.split(' ')
+    if len(line[0]) < 1:
+      print('** no table name **')
+      return
+    if len(line) < 2:
+      print('** no id **')
+      return
+    if line[0] not in CommandLine.tables:
+      print('** table name not valid **')
+      return
+    cur.execute(f'SELECT * FROM {line[0]} WHERE id={line[1]}')
+    if cur.fetchone():
+      cur.execute(f'DELETE FROM {line[0]} WHERE id={line[1]}')
+      return
+    print('** no instance found')
 
 
 
