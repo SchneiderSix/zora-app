@@ -28,7 +28,7 @@ export const getUserName = (req, res) => {
 
 export const getUserFriends = (req, res) => {
   const userId = req.params.userId;
-  const q = `SELECT * FROM users AS u LEFT JOIN relationships AS r ON (u.id = r.followedUserId) WHERE r.followedUserId!=?`;
+  const q = `SELECT users.id, name, profilePic FROM users LEFT JOIN relationships AS r ON (users.id = r.followedUserId) WHERE r.followerUserId=?`;
 
   db.query(q, [userId], (err, data) => {
     if (err) return res.status(500).json(err);

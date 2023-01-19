@@ -17,6 +17,7 @@ import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
 
+
 const Profile = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const { currentUser } = useContext(AuthContext);
@@ -55,6 +56,7 @@ const Profile = () => {
 
   const handleFollow = () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
+    window.location.reload(false);
   };
 
   return (
