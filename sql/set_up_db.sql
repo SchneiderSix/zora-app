@@ -41,7 +41,7 @@ CREATE TABLE `comments` (
   CONSTRAINT `postId` FOREIGN KEY (`postId`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `decisions` (
+CREATE TABLE `likes` (
   `id` int NOT NULL,
   `userId` int NOT NULL,
   `postId` int NOT NULL,
