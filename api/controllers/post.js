@@ -62,9 +62,30 @@ export const addPost = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
+    let redo = 0
+    do
+    {
+      // min 10000000
+      // max 99999999
+      var uid = getRandomId(10000000, 99999999)
+      let q_id = "SELECT * FROM `posts` WHERE `id`=?";
+      db.query(q_id, [+uid], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data)
+        {
+          redo = 1;
+        }
+        else
+        {
+          redo = 0;
+        }
+      })
+    }while(redo == 1);
+
     const q =
-      "INSERT INTO posts(`desc`, `img`, `createdAt`, `userId`) VALUES (?)";
+      "INSERT INTO posts(`id`, `desc`, `img`, `createdAt`, `userId`) VALUES (?)";
     const values = [
+      uid,
       req.body.desc,
       req.body.img,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
@@ -94,3 +115,11 @@ export const deletePost = (req, res) => {
     });
   });
 };
+
+
+
+function getRandomId(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}

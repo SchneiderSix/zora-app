@@ -23,7 +23,6 @@ export const register = (req, res) => {
       // min 10000000
       // max 99999999
       var uid = getRandomId(10000000, 99999999)
-      console.log(typeof(uid), uid)
       let q_id = "SELECT * FROM `users` WHERE `id`=?";
       db.query(q_id, [+uid], (err, data) => {
         if (err) return res.status(500).json(err);
