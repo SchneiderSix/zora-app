@@ -12,6 +12,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import { selectUnstyledClasses } from "@mui/base";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
@@ -59,6 +60,12 @@ const Post = ({ post }) => {
     deleteMutation.mutate(post.id);
   };
 
+  /*click on post img*/
+  const [isActive, setActive] = useState("false");
+
+  const handleClickImg = () => {
+    setActive(!isActive);
+  };
   return (
     <div className="post">
       <div className="container">
@@ -82,7 +89,7 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={"/upload/" + post.img} alt="" />
+          <img className={isActive ? "desactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
         </div>
         <div className="info">
           <div className="item">
