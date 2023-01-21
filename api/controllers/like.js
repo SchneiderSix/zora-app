@@ -17,10 +17,33 @@ export const addLike = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    const q = "INSERT INTO likes (`userId`,`postId`) VALUES (?)";
+    let redo = 0
+    do
+    {
+      // min 10000000
+      // max 99999999
+      var uid = getRandomId(10000000, 99999999)
+      let q_id = "SELECT * FROM `posts` WHERE `id`=?";
+      db.query(q_id, [+uid], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data)
+        {
+          redo = 1;
+        }
+        else
+        {
+          redo = 0;
+        }
+      })
+    }while(redo == 1);
+
+
+    const q = "INSERT INTO likes (`id`, `userId`,`postId`, `yes_no`) VALUES (?)";
     const values = [
+      uid,
       userInfo.id,
-      req.body.postId
+      req.body.postId,
+      true
     ];
 
     db.query(q, [values], (err, data) => {
@@ -46,3 +69,10 @@ export const deleteLike = (req, res) => {
     });
   });
 };
+
+
+function getRandomId(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
