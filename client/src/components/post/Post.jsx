@@ -52,6 +52,7 @@ const Post = ({ post }) => {
     }
   );
 
+
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
   };
