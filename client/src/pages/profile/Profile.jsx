@@ -73,9 +73,6 @@ const Profile = () => {
             <div className="uInfo">
               <div className="left">
                 <a href="http://facebook.com">
-                  <FacebookTwoToneIcon fontSize="large" />
-                </a>
-                <a href="http://facebook.com">
                   <InstagramIcon fontSize="large" />
                 </a>
                 <a href="http://facebook.com">
@@ -84,19 +81,16 @@ const Profile = () => {
                 <a href="http://facebook.com">
                   <LinkedInIcon fontSize="large" />
                 </a>
-                <a href="http://facebook.com">
-                  <PinterestIcon fontSize="large" />
-                </a>
               </div>
               <div className="center">
                 <span>{data.name}</span>
                 <div className="info">
                   <div className="item">
-                    <PlaceIcon />
+                   {data.city ? <PlaceIcon /> : ""}
                     <span>{data.city}</span>
                   </div>
                   <div className="item">
-                    <LanguageIcon />
+                    {data.website ? <LanguageIcon /> : ""}
                     <span>{data.website}</span>
                   </div>
                 </div>

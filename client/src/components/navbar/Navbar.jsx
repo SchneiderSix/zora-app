@@ -20,10 +20,10 @@ import {useNavigate} from 'react-router-dom';
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
+  const [cu, setcu] = useState(currentUser);
 
   const [searchInput, setSearchInput] = useState('');
   const navi = useNavigate();
-
 
   const searchItems = () => {
     makeRequest.get("/users/find/name/" + searchInput)
@@ -32,11 +32,16 @@ const Navbar = () => {
     .catch(err=> console.log("User Not Found: " + err));
   }
 
+  const reRender = () => {
+    // calling the forceUpdate() method
+    this.forceUpdate();
+  };
+
   return (
     <div className="navbar">
       <div className="left">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <span style={darkMode ? ({ color: "white" }) : ({ color: "black" })}>Social Media App</span>
+          <span style={darkMode ? ({ color: "lightgrey" }) : ({ color: "black" })}>Social Media App</span>
         </Link>
         <HomeOutlinedIcon />
         {darkMode ? (
@@ -51,15 +56,15 @@ const Navbar = () => {
         </div>
       </div>
       <div className="right">
-      <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> window.location.reload())}>
+      <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
           <PersonOutlinedIcon />
         </Link>
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
         <div className="user">
           <img
-            src={"/upload/" + currentUser.profilePic}
-            alt=""
+            src={"/upload/" + currentUser.profilePic + '?' + new Date()}
+            alt={"" + currentUser.profilePic}
           />
           <span>{currentUser.name}</span>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
