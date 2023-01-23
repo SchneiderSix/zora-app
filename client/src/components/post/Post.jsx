@@ -14,6 +14,8 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { selectUnstyledClasses } from "@mui/base";
 
+var decision = undefined
+
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,7 +33,7 @@ const Post = ({ post }) => {
   const mutation = useMutation(
     (liked) => {
       if (liked) return makeRequest.delete("/likes?postId=" + post.id);
-      return makeRequest.post("/likes", { postId: post.id });
+      return makeRequest.post("/likes", {postId: post.id, decision: decision});
     },
     {
       onSuccess: () => {
@@ -52,7 +54,13 @@ const Post = ({ post }) => {
     }
   );
 
-  const handleLike = () => {
+  
+  const handleYes = () => {
+    decision = 1
+    mutation.mutate(data.includes(currentUser.id));
+  };
+  const handleNo = () => {
+    decision = 0
     mutation.mutate(data.includes(currentUser.id));
   };
 
@@ -98,12 +106,25 @@ const Post = ({ post }) => {
             ) : data.includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
-                onClick={handleLike}
+                onClick={handleYes}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleLike} />
+              <FavoriteBorderOutlinedIcon onClick={handleYes} />
             )}
-            {data?.length} Likes
+            {data?.length} Yes
+          </div>
+          <div className="item">
+            {isLoading ? (
+              "loading"
+            ) : data.includes(currentUser.id) ? (
+              <FavoriteOutlinedIcon
+                style={{ color: "red" }}
+                onClick={handleNo}
+              />
+            ) : (
+              <FavoriteBorderOutlinedIcon onClick={handleNo} />
+            )}
+            {data?.length} No
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
@@ -121,3 +142,5 @@ const Post = ({ post }) => {
 };
 
 export default Post;
+
+

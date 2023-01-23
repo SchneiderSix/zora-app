@@ -17,14 +17,45 @@ export const addLike = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    const q = "INSERT INTO likes (`userId`,`postId`) VALUES (?)";
+    //console.log(req)
+    //console.log(res)
+
+    let redo = 0
+    do
+    {
+      // min 10000000
+      // max 99999999
+      var uid = getRandomId(10000000, 99999999)
+      let q_id = "SELECT * FROM `likes` WHERE `id`=?";
+      db.query(q_id, [+uid], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data)
+        {
+          redo = 1;
+        }
+        else
+        {
+          redo = 0;
+        }
+      })
+    }while(redo == 1);
+
+    //let decision = req.body.decision == '1' ? 1 : 0
+
+    console.log(req.body.decision)
+
+    const q = "INSERT INTO likes (`id`, `userId`,`postId`, `yes_no`) VALUES (?)";
     const values = [
+      uid,
       userInfo.id,
-      req.body.postId
+      req.body.postId,
+      req.body.decision
     ];
 
     db.query(q, [values], (err, data) => {
+      console.log('before')
       if (err) return res.status(500).json(err);
+      console.log('after')
       return res.status(200).json("Post has been liked.");
     });
   });
@@ -46,3 +77,10 @@ export const deleteLike = (req, res) => {
     });
   });
 };
+
+
+function getRandomId(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}

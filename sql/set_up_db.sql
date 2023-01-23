@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `posts` (
+CREATE TABLE IF NOT EXISTS `posts` (
   `id` int NOT NULL,
   `desc` varchar(200) DEFAULT NULL,
   `img` varchar(200) DEFAULT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE `posts` (
   CONSTRAINT `userid` FOREIGN KEY (`userid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `comments` (
+CREATE TABLE IF NOT EXISTS `comments` (
   `id` int NOT NULL,
   `desc` varchar(200) NOT NULL,
   `createdAt` datetime DEFAULT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `comments` (
   CONSTRAINT `postId` FOREIGN KEY (`postId`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `decisions` (
+CREATE TABLE IF NOT EXISTS`likes` (
   `id` int NOT NULL,
   `userId` int NOT NULL,
   `postId` int NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE `decisions` (
   CONSTRAINT `likePostId` FOREIGN KEY (`postId`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `relationships` (
+CREATE TABLE IF NOT EXISTS `relationships` (
   `id` int NOT NULL,
   `followerUserId` int NOT NULL,
   `followedUserId` int NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `relationships` (
   CONSTRAINT `followerUser` FOREIGN KEY (`followerUserId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `stories` (
+CREATE TABLE IF NOT EXISTS `stories` (
   `id` int NOT NULL,
   `img` varchar(200) NOT NULL,
   `userId` int NOT NULL,
@@ -76,3 +76,9 @@ CREATE TABLE `stories` (
   CONSTRAINT `storyUserId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS `images` (
+  `id` VARCHAR(500) NOT NULL,
+  `type` VARCHAR(500) NOT NULL,
+  `authorId` INT NOT NULL,
+  PRIMARY KEY (`id`)
+);

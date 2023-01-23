@@ -1,6 +1,8 @@
 import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export const register = (req, res) => {
   //CHECK USER IF EXISTS
@@ -15,10 +17,31 @@ export const register = (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
+    let redo = 0
+    do
+    {
+      // min 10000000
+      // max 99999999
+      var uid = getRandomId(10000000, 99999999)
+      let q_id = "SELECT * FROM `users` WHERE `id`=?";
+      db.query(q_id, [+uid], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data)
+        {
+          redo = 1;
+        }
+        else
+        {
+          redo = 0;
+        }
+      })
+    }while(redo == 1);
+    
     const q =
-      "INSERT INTO users (`username`,`email`,`password`,`name`) VALUE (?)";
+    "INSERT INTO users (`id`, `username`,`email`,`password`,`name`) VALUE (?)";
 
     const values = [
+      uid,
       req.body.username,
       req.body.email,
       hashedPassword,
@@ -66,3 +89,10 @@ export const logout = (req, res) => {
     sameSite:"none"
   }).status(200).json("User has been logged out.")
 };
+
+
+function getRandomId(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
