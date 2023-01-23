@@ -1,6 +1,7 @@
 @import "../../style.scss";
 
 .profile {
+  height: 100%;
   @include themify($themes) {
     background-color: themed("bgSoft");
 
@@ -29,6 +30,7 @@
     }
     .profileContainer {
       padding: 20px 70px;
+      min-height: 600px;
 
       @include mobile{
         padding: 10px;
