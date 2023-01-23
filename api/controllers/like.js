@@ -17,8 +17,8 @@ export const addLike = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    console.log(req)
-    console.log(res)
+    //console.log(req)
+    //console.log(res)
 
     let redo = 0
     do
@@ -26,7 +26,7 @@ export const addLike = (req, res) => {
       // min 10000000
       // max 99999999
       var uid = getRandomId(10000000, 99999999)
-      let q_id = "SELECT * FROM `posts` WHERE `id`=?";
+      let q_id = "SELECT * FROM `likes` WHERE `id`=?";
       db.query(q_id, [+uid], (err, data) => {
         if (err) return res.status(500).json(err);
         if (data)
@@ -40,17 +40,22 @@ export const addLike = (req, res) => {
       })
     }while(redo == 1);
 
+    //let decision = req.body.decision == '1' ? 1 : 0
+
+    console.log(req.body.decision)
 
     const q = "INSERT INTO likes (`id`, `userId`,`postId`, `yes_no`) VALUES (?)";
     const values = [
       uid,
       userInfo.id,
       req.body.postId,
-      true
+      req.body.decision
     ];
 
     db.query(q, [values], (err, data) => {
+      console.log('before')
       if (err) return res.status(500).json(err);
+      console.log('after')
       return res.status(200).json("Post has been liked.");
     });
   });

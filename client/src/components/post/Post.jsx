@@ -33,7 +33,7 @@ const Post = ({ post }) => {
   const mutation = useMutation(
     (liked) => {
       if (liked) return makeRequest.delete("/likes?postId=" + post.id);
-      return makeRequest.post("/likes", { postId: post.id }, '/', { decision: decision});
+      return makeRequest.post("/likes", {postId: post.id, decision: decision});
     },
     {
       onSuccess: () => {
