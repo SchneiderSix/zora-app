@@ -14,8 +14,20 @@ const Share = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+
+      /*Check extensions of file*/
+      const exts = ['.jpg', '.png', '.gif', 'jpeg'];
+      let fileName = file.name;
+      if (!(new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)) {
+        alert('Please put only jpg, png, gif and jpeg files' + fileName);
+        fileName = "";
+        setFile(null);
+        return;
+      } else {
+        const res = await makeRequest.post("/upload", formData);
+        return res.data;
+      };
+
     } catch (err) {
       console.log(err);
     }
@@ -41,6 +53,8 @@ const Share = () => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
+    /*Check if imgUrl is empty and it doesn't creates empty post*/
+    if (!imgUrl) return;
     mutation.mutate({ desc, img: imgUrl });
     setDesc("");
     setFile(null);
@@ -59,7 +73,7 @@ const Share = () => {
               value={desc}
             />
           </div>
-          <div className="right">
+          <div className="right" id="shareImg">
             {file && (
               <img className="file" alt="" src={URL.createObjectURL(file)} />
             )}

@@ -23,8 +23,20 @@ const Update = ({ setOpenUpdate, user }) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+
+      /*Check extensions of file*/
+      const exts = ['.jpg', '.png', '.gif', 'jpeg'];
+      let fileName = file.name;
+      if (!(new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)) {
+        alert('Please put only jpg, png, gif and jpeg files' + fileName);
+        fileName = "";
+        setCover(null);
+        setProfile(null);
+        return;
+      } else {
+        const res = await makeRequest.post("/upload", formData);
+        return res.data;
+      };
     } catch (err) {
       console.log(err);
     }
@@ -57,6 +69,7 @@ const Update = ({ setOpenUpdate, user }) => {
     let profileUrl;
     coverUrl = cover ? await upload(cover) : user.profilePic;
     profileUrl = profile ? await upload(profile) : user.coverPic;
+    if (!coverUrl || !profileUrl) return;
     
     mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
     setOpenUpdate(false);
