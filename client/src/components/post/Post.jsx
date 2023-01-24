@@ -14,20 +14,21 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { selectUnstyledClasses } from "@mui/base";
 
-var decision = undefined
 
+var decision = undefined
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  
   const { currentUser } = useContext(AuthContext);
-
+  
   const { isLoading, error, data } = useQuery(["likes", post.id], () =>
-    makeRequest.get("/likes?postId=" + post.id).then((res) => {
-      return res.data;
-    })
+  makeRequest.get("/likes?postId=" + post.id).then((res) => {
+    return res.data;
+  })
   );
-
+let yes = 0
+let no = 0
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -41,20 +42,25 @@ const Post = ({ post }) => {
         queryClient.invalidateQueries(["likes"]);
       },
     }
-  );
-  const deleteMutation = useMutation(
-    (postId) => {
-      return makeRequest.delete("/posts/" + postId);
-    },
-    {
-      onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries(["posts"]);
+    );
+    const deleteMutation = useMutation(
+      (postId) => {
+        return makeRequest.delete("/posts/" + postId);
       },
-    }
-  );
-
-  
+      {
+        onSuccess: () => {
+          // Invalidate and refetch
+          queryClient.invalidateQueries(["posts"]);
+        },
+      }
+      );
+      
+      for (const i in data)
+      {
+        if (data[i][1] == 1) yes++;
+        else no++;
+      }
+      
   const handleYes = () => {
     decision = 1
     mutation.mutate(data.includes(currentUser.id));
@@ -103,7 +109,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data.includes(currentUser.id) ? (
+            ) : data[1].includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
@@ -111,20 +117,20 @@ const Post = ({ post }) => {
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleYes} />
             )}
-            {data?.length} Yes
+            {yes} Yes
           </div>
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data.includes(currentUser.id) ? (
+              ) : data[1].includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
-                style={{ color: "red" }}
+                style={{ color: "blue" }}
                 onClick={handleNo}
               />
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleNo} />
             )}
-            {data?.length} No
+            {no} No
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
@@ -142,5 +148,4 @@ const Post = ({ post }) => {
 };
 
 export default Post;
-
 
