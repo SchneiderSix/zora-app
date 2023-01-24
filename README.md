@@ -45,7 +45,7 @@ You have 6 H1 headings. You may want to use the "H1 -> H2" option to demote all 
 <p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
-![alt_text]([images/image1.png](https://drive.google.com/file/d/1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm/view?usp=share_link) "image_tooltip")
+![image](https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm/view?usp=share_link)
 
 
 
