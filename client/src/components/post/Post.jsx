@@ -15,7 +15,7 @@ import { AuthContext } from "../../context/authContext";
 import { selectUnstyledClasses } from "@mui/base";
 
 
-var decision = undefined
+var decision = null
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,8 +27,7 @@ const Post = ({ post }) => {
     return res.data;
   })
   );
-let yes = 0
-let no = 0
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -54,9 +53,11 @@ let no = 0
         },
       }
       );
-      
+      let yes = 0
+      let no = 0
       for (const i in data)
       {
+        if (data[i].includes(currentUser.id)) decision = data[i][1];
         if (data[i][1] == 1) yes++;
         else no++;
       }
@@ -109,7 +110,7 @@ let no = 0
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data[1].includes(currentUser.id) ? (
+            ) : decision != null && decision == 1 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
@@ -122,7 +123,7 @@ let no = 0
           <div className="item">
             {isLoading ? (
               "loading"
-              ) : data[1].includes(currentUser.id) ? (
+              ) : decision != null && decision == 0 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "blue" }}
                 onClick={handleNo}
