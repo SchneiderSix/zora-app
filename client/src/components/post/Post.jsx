@@ -16,6 +16,7 @@ import { selectUnstyledClasses } from "@mui/base";
 
 
 var decision = null
+var chosen = null
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,7 +58,7 @@ const Post = ({ post }) => {
       let no = 0
       for (const i in data)
       {
-        if (data[i].includes(currentUser.id)) decision = data[i][1];
+        if (data[i].includes(currentUser.id)) chosen = data[i][1];
         if (data[i][1] == 1) yes++;
         else no++;
       }
@@ -104,26 +105,27 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img className={isActive ? "desactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
+          <img className={isActive ? "deactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
         </div>
         <div className="info">
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : decision != null && decision == 1 ? (
+            ) : chosen != null && chosen == 1 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleYes} />
+              <FavoriteBorderOutlinedIcon
+              onClick={handleYes}/>
             )}
             {yes} Yes
           </div>
           <div className="item">
             {isLoading ? (
               "loading"
-              ) : decision != null && decision == 0 ? (
+              ) : chosen != null && chosen == 0 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "blue" }}
                 onClick={handleNo}
