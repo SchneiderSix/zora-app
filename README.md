@@ -9,7 +9,7 @@
 # 
 
 <p align="center">
-![image](https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm)
+   <img src="https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm" />
 </p>
 
 
