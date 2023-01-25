@@ -14,18 +14,19 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { selectUnstyledClasses } from "@mui/base";
 
-var decision = undefined
 
+var decision = null
+var chosen = null
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  
   const { currentUser } = useContext(AuthContext);
-
+  
   const { isLoading, error, data } = useQuery(["likes", post.id], () =>
-    makeRequest.get("/likes?postId=" + post.id).then((res) => {
-      return res.data;
-    })
+  makeRequest.get("/likes?postId=" + post.id).then((res) => {
+    return res.data;
+  })
   );
 
   const queryClient = useQueryClient();
@@ -41,20 +42,27 @@ const Post = ({ post }) => {
         queryClient.invalidateQueries(["likes"]);
       },
     }
-  );
-  const deleteMutation = useMutation(
-    (postId) => {
-      return makeRequest.delete("/posts/" + postId);
-    },
-    {
-      onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries(["posts"]);
+    );
+    const deleteMutation = useMutation(
+      (postId) => {
+        return makeRequest.delete("/posts/" + postId);
       },
-    }
-  );
-
-  
+      {
+        onSuccess: () => {
+          // Invalidate and refetch
+          queryClient.invalidateQueries(["posts"]);
+        },
+      }
+      );
+      let yes = 0
+      let no = 0
+      for (const i in data)
+      {
+        if (data[i].includes(currentUser.id)) chosen = data[i][1];
+        if (data[i][1] == 1) yes++;
+        else no++;
+      }
+      
   const handleYes = () => {
     decision = 1
     mutation.mutate(data.includes(currentUser.id));
@@ -97,34 +105,35 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img className={isActive ? "desactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
+          <img className={isActive ? "deactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
         </div>
         <div className="info">
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data.includes(currentUser.id) ? (
+            ) : chosen != null && chosen == 1 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleYes} />
+              <FavoriteBorderOutlinedIcon
+              onClick={handleYes}/>
             )}
-            {data?.length} Yes
+            {yes} Yes
           </div>
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data.includes(currentUser.id) ? (
+              ) : chosen != null && chosen == 0 ? (
               <FavoriteOutlinedIcon
-                style={{ color: "red" }}
+                style={{ color: "blue" }}
                 onClick={handleNo}
               />
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleNo} />
             )}
-            {data?.length} No
+            {no} No
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
@@ -142,5 +151,4 @@ const Post = ({ post }) => {
 };
 
 export default Post;
-
 
