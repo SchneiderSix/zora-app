@@ -21,6 +21,7 @@ const Register = () => {
 
     try {
       await axios.post("http://localhost:8800/api/auth/register", inputs);
+      alert("User created successfully");
     } catch (err) {
       setErr(err.response.data);
     }
