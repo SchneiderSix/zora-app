@@ -52,13 +52,13 @@
 # Challenge
 
 
-    This project is going to be a social media network. Posts, votes (yes, no),  chat and create a system recommendation with AI using cosine similarity.
+This project is going to be a social media network. Posts, votes (yes, no),  chat and create a system recommendation with AI using cosine similarity.
 
 
 # Risks
 
 
-    The principal risks are uploading a virus when making a post and SQL Injections.
+The principal risks are uploading a virus when making a post and SQL Injections.
 
 
 # Infrastructure
