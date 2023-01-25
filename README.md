@@ -64,7 +64,7 @@
 # Infrastructure
 
 
-    We made an API that communicates with the MySQL Database using the Axios method for every request. When the User is registered the password is Hashed with Salt from Bcryptjs. Every time a User Logins a var called “AuthContext” (made with a mix between hooks useContext and useState) is going to help to locate the current User with his data (posts, friends, etc).
+We made an API that communicates with the MySQL Database using the Axios method for every request. When the User is registered the password is Hashed with Salt from Bcryptjs. Every time a User Logins a var called “AuthContext” (made with a mix between hooks useContext and useState) is going to help to locate the current User with his data (posts, friends, etc).
 
 
 # Existing Solutions
