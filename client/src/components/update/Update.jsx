@@ -4,8 +4,11 @@ import "./update.scss";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { DarkModeContext } from "../../context/darkModeContext";
+import { AuthContext } from "../../context/authContext";
 
 const Update = ({ setOpenUpdate, user }) => {
+  const { currentUser } = useContext(AuthContext);
+
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
   const [texts, setTexts] = useState({
@@ -74,7 +77,9 @@ const Update = ({ setOpenUpdate, user }) => {
     mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
     setOpenUpdate(false);
     setCover(null);
-    setProfile(null);}
+    setProfile(null);
+    alert(currentUser.name)
+  };
   
   return (
     <div className="update">

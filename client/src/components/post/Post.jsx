@@ -12,9 +12,17 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import { selectUnstyledClasses } from "@mui/base";
+
+import * as stringSimilarity from "string-similarity";
 
 const Post = ({ post }) => {
+  /**/
+  const cosine = (desc) => {
+    const matches = stringSimilarity.findBestMatch(desc, []);
+    console.log(matches["bestMatch"]["target"]);
+  };
+  /**/
+
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -54,6 +62,12 @@ const Post = ({ post }) => {
 
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
+    /*working in cosine*/
+    console.log(post.desc);
+    makeRequest.get(`likes/${currentUser.id}/${post.id}`).then((response) => {
+      console.log(response)
+    });
+
   };
 
   const handleDelete = () => {
@@ -98,7 +112,7 @@ const Post = ({ post }) => {
             ) : data.includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
-                onClick={handleLike}
+                onClick={() => {handleLike();}}
               />
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleLike} />
