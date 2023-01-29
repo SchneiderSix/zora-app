@@ -53,8 +53,8 @@ const Share = () => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
-    /*Check if imgUrl is empty and it doesn't creates empty post*/
-    if (!imgUrl) return;
+    /*Updated, no desc === no create empty post*/
+    if (!desc) return;
     mutation.mutate({ desc, img: imgUrl });
     setDesc("");
     setFile(null);

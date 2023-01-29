@@ -57,3 +57,18 @@ export const samePostLike = (req, res) => {
     }
   });
 };
+
+export const getSamePostLike = (req, res) => {
+  const usId = req.params.usId;
+  const posId = req.params.posId;
+  const q = `SELECT * FROM posts LEFT JOIN likes ON (posts.id = likes.postId) LEFT JOIN users ON (likes.userId = users.id) WHERE likes.userId=${usId} AND likes.postId!=${posId} ORDER BY likes.id DESC LIMIT 3;`;
+
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};

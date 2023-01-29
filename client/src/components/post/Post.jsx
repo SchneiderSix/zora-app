@@ -16,12 +16,11 @@ import { AuthContext } from "../../context/authContext";
 import * as stringSimilarity from "string-similarity";
 
 const Post = ({ post }) => {
-  /**/
-  const cosine = (desc) => {
-    const matches = stringSimilarity.findBestMatch(desc, []);
+
+  const cosine = (txt, arr) => {
+    const matches = stringSimilarity.findBestMatch(txt, arr);
     console.log(matches["bestMatch"]["target"]);
   };
-  /**/
 
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,14 +59,41 @@ const Post = ({ post }) => {
     }
   );
 
+
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
     /*working in cosine*/
+    const sameArray = [];
+    const descOb = {};
     console.log(post.desc);
+    /*Get users that liked the same post*/
     makeRequest.get(`likes/${currentUser.id}/${post.id}`).then((response) => {
-      console.log(response)
+      console.log(response.data);
+      for (let i in response.data) {
+        console.log("UserID: " + response.data[i]["id"] + " PostID: " + post.id);
+        /*Save userId into array*/
+        sameArray.push(response.data[i]["id"]);};
+      for (let i of sameArray) {
+        /*Get last 3 posts of every user*/
+        makeRequest.get(`likes/related/${i}/${post.id}`).then((res) => {
+          console.log(res);
+          for (var j = 0; j < Object.keys(res.data).length; j++) {
+            if (res.data[j]["desc"] && !(descOb["postId"])) {
+              /*Save postId-dec into ob*/
+              descOb[res.data[j]["postId"]] = res.data[j]["desc"];
+            };
+          };
+          if (j  === Object.keys(res.data).length) console.log("Last Number of sameArr: " +sameArray.at(-1) + "  Current iterator: " + i);
+          if (i === sameArray.at(-1)) console.log("This is -1 Current iterator: " +j+" Len res.data: "+Object.keys(res.data).length);
+          /*Last iteration*/
+          if ((i === sameArray.at(-1)) && (j  === Object.keys(res.data).length)) {
+            console.log(descOb);
+            console.log("Cosine");
+            cosine(post.desc, Object.values(descOb));
+          };
+        });
+      };
     });
-
   };
 
   const handleDelete = () => {
