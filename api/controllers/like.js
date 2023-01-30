@@ -43,6 +43,7 @@ export const deleteLike = (req, res) => {
   });
 };
 
+/*Get useres that liked same post*/
 export const samePostLike = (req, res) => {
   const usrId = req.params.usrId;
   const postId = req.params.postId;
@@ -58,6 +59,7 @@ export const samePostLike = (req, res) => {
   });
 };
 
+/*Get posts liked by users that liked same post before*/
 export const getSamePostLike = (req, res) => {
   const usId = req.params.usId;
   const posId = req.params.posId;

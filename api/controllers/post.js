@@ -94,3 +94,16 @@ export const deletePost = (req, res) => {
     });
   });
 };
+/*Get current feed, help cosine to don't recommend post from current feed*/
+export const getFeedFromUser = (req, res) => {
+  const userId = req.params.userId;
+  const q = `SELECT posts.id, posts.desc FROM posts LEFT JOIN relationships AS r ON (posts.userid=r.followedUserId) WHERE r.followerUserId=${userId} OR posts.userid=${userId} ORDER BY posts.createdAt DESC`;
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};
