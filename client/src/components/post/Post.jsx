@@ -19,7 +19,8 @@ const Post = ({ post }) => {
 
   const cosine = (txt, arr) => {
     const matches = stringSimilarity.findBestMatch(txt, arr);
-    console.log(matches["bestMatch"]["target"]);
+    /*console.log(matches["bestMatch"]["target"]);*/
+    return (matches["bestMatch"]["target"]);
   };
 
   const [commentOpen, setCommentOpen] = useState(false);
@@ -97,7 +98,12 @@ const Post = ({ post }) => {
             if ((i === sameArray.at(-1)) && (j  === Object.keys(res.data).length)) {
               /*console.log(descOb);*/
               console.log("Cosine:");
-              if (Object.keys(descOb).length) cosine(post.desc, Object.values(descOb));
+              if (Object.keys(descOb).length) {
+                const cs = cosine(post.desc, Object.values(descOb));
+                if (cs) {
+                  console.log("PostId: " + Object.keys(descOb).find(key => descOb[key] === cs) + " PostDesc: " + cs);
+                };
+              };
             };
           });
         };
