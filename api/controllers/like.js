@@ -14,53 +14,59 @@ export const addLike = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
+  
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
-    /*db.query("SELECT id, yes_no FROM likes WHERE postId=? AND userId=?", [req.body.postId, userInfo.id], (err, yes_no) => {
+    
+    db.query("SELECT id, yes_no FROM likes WHERE postId=? AND userId=?", [req.body.postId, userInfo.id], (err, yes_no) => {
       if (err) return res.status(500).json(err);
-      let yn = Object.values(JSON.parse(JSON.stringify(yes_no)));
-      if (yn[0] && (yn[0]['yes_no'] == req.body.decision))
-      {
-        console.log(yn[0]['id'])
-        db.query("DELETE FROM likes WHERE `d` = ?", [yn[0]['id']], (err, data) => {
-          if (err) return res.status(500).json(err);
-          return res.status(200).json("Post has been disliked.");
-        });
-
+      let result = Object.values(JSON.parse(JSON.stringify(yes_no)))
+      try{
+        if (req.body.decision === result[0]['yes_no']){
+          del(userInfo.id, req.body.postId)
+          return res.status(200).json("Post like has been deleted.");
+        }
+        else if(req.body.decision !== result[0]['yes_no']){
+          //del(userInfo.id, req.body.postId)
+          sw(userInfo.id, req.body.postId, req.body.decision)
+          return res.status(200).json("Post like has been updated.");
+        }
       }
-    });*/
-
-    let redo = 0
-    do
-    {
-      // min 10000000
-      // max 99999999
-      var uid = getRandomId(10000000, 99999999)
-      let q_id = "SELECT * FROM `likes` WHERE `id`=?";
-      db.query(q_id, [+uid], (err, data) => {
-        if (err) return res.status(500).json(err);
-        if (data)
+      catch(e){
+        console.log(e)
+        let redo = 0
+        do
         {
-          redo = 1;
-        }
-        else
-        {
-          redo = 0;
-        }
-      })
-    }while(redo == 1);
+          // min 10000000
+          // max 99999999
+          var uid = getRandomId(10000000, 99999999)
+          let q_id = "SELECT * FROM `likes` WHERE `id`=?";
+          db.query(q_id, [+uid], (err, data) => {
+            if (err) return res.status(500).json(err);
+            if (data)
+            {
+              redo = 1;
+            }
+            else
+            {
+              redo = 0;
+            }
+          })
+        }while(redo == 1);
+    
+        const q = "INSERT INTO likes (`id`, `userId`,`postId`, `yes_no`) VALUES (?)";
+        const values = [
+          uid,
+          userInfo.id,
+          req.body.postId,
+          req.body.decision
+        ];
 
-    const q = "INSERT INTO likes (`id`, `userId`,`postId`, `yes_no`) VALUES (?)";
-    const values = [
-      uid,
-      userInfo.id,
-      req.body.postId,
-      req.body.decision
-    ];
-
-    db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json("Post has been liked.");
+        db.query(q, [values], (err, data) => {
+          if (err) return res.status(500).json(err);
+          return res.status(200).json("Post has been liked.");
+        });
+      }
     });
   });
 };
@@ -89,10 +95,14 @@ function getRandomId(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-
-function del() {
-  db.query("DELETE FROM likes WHERE `userId` = ? AND `postId` = ?", [userInfo.id, req.query.postId], (err, data) => {
+function sw(uinfo, postid, decision) {
+  db.query("UPDATE likes SET yes_no=? WHERE `userId` = ? AND `postId` = ?", [decision, uinfo, postid], (err, data) => {
     if (err) return res.status(500).json(err);
-    return res.status(200).json("Post has been disliked.");
+  })
+}
+
+function del(uinfo, postid) {
+  db.query("DELETE FROM likes WHERE `userId` = ? AND `postId` = ?", [uinfo, postid], (err, data) => {
+    if (err) return res.status(500).json(err);
   });
 }
