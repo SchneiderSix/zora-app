@@ -31,6 +31,8 @@ const Post = ({ post }) => {
 
   const queryClient = useQueryClient();
 
+
+
   const mutation = useMutation(
     (liked) => {
       if (liked) return makeRequest.delete("/likes?postId=" + post.id);
@@ -111,7 +113,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : data.includes(currentUser.id) ? (
+            ) : chosen != null && chosen == 1 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
@@ -125,7 +127,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-              ) : data.includes(currentUser.id) ? (
+              ) : chosen != null && chosen == 0 ? (
               <FavoriteOutlinedIcon
                 style={{ color: "blue" }}
                 onClick={handleNo}
@@ -151,4 +153,3 @@ const Post = ({ post }) => {
 };
 
 export default Post;
-
