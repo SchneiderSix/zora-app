@@ -3,7 +3,7 @@ USE `social`;
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL,
-  `username` varchar(45) NOT NULL,
+  `username` varchar(45) NOT NULL UNIQUE,
   `email` varchar(45) NOT NULL,
   `password` varchar(200) NOT NULL,
   `name` varchar(45) NOT NULL,

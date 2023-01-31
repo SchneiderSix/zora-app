@@ -32,8 +32,7 @@ export const addLike = (req, res) => {
           return res.status(200).json("Post like has been updated.");
         }
       }
-      catch(e){
-        console.log(e)
+      catch{
         let redo = 0
         do
         {
