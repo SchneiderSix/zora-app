@@ -15,9 +15,9 @@ import { AuthContext } from "../../context/authContext";
 import { selectUnstyledClasses } from "@mui/base";
 
 
-var decision = null
-var chosen = null
 const Post = ({ post }) => {
+  var decision = null
+  var chosen = null
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   
@@ -120,13 +120,8 @@ const Post = ({ post }) => {
               />
             ) : (
               <FavoriteBorderOutlinedIcon
-              onClick={
-                function (){
-                  handleYes()
-                  this.forceUpdate();
-                }
-                }/>
-
+              onClick={handleYes}
+              />
             )}
             {yes} Yes
           </div>
@@ -139,7 +134,9 @@ const Post = ({ post }) => {
                 onClick={handleNo}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleNo} />
+              <FavoriteBorderOutlinedIcon
+              onClick={handleNo} 
+              />
             )}
             {no} No
           </div>
