@@ -111,7 +111,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-            ) : chosen != null && chosen == 1 ? (
+            ) : data.includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleYes}
@@ -125,7 +125,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-              ) : chosen != null && chosen == 0 ? (
+              ) : data.includes(currentUser.id) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "blue" }}
                 onClick={handleNo}

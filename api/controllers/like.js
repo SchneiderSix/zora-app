@@ -14,6 +14,7 @@ export const addLike = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not logged in!");
 
+  
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
     /*db.query("SELECT id, yes_no FROM likes WHERE postId=? AND userId=?", [req.body.postId, userInfo.id], (err, yes_no) => {
@@ -26,10 +27,23 @@ export const addLike = (req, res) => {
           if (err) return res.status(500).json(err);
           return res.status(200).json("Post has been disliked.");
         });
-
+        
       }
     });*/
-
+    db.query("SELECT id, yes_no FROM likes WHERE postId=? AND userId=?", [req.body.postId, userInfo.id], (err, yes_no) => {
+      if (err) return res.status(500).json(err);
+      let result = Object.values(JSON.parse(JSON.stringify(yes_no)))
+      try{
+        if (req.body.decision === result[0]['yes_no']){
+          console.log(userInfo.id, req.query.postId)
+          del(userInfo.id, req.body.postId)
+          console.log("after")
+        } 
+      }
+      catch(e){
+        console.log(e)
+      }
+    });
     let redo = 0
     do
     {
@@ -90,9 +104,9 @@ function getRandomId(min, max) {
 }
 
 
-function del() {
-  db.query("DELETE FROM likes WHERE `userId` = ? AND `postId` = ?", [userInfo.id, req.query.postId], (err, data) => {
+function del(uinfo, postid) {
+  db.query("DELETE FROM likes WHERE `userId` = ? AND `postId` = ?", [uinfo, postid], (err, data) => {
     if (err) return res.status(500).json(err);
-    return res.status(200).json("Post has been disliked.");
+    console.log("deleted")
   });
 }
