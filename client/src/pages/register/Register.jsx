@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./register.scss";
 import axios from "axios";
+import { AuthContext } from "../../context/authContext";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -11,17 +12,19 @@ const Register = () => {
     name: "",
   });
   const [err, setErr] = useState(null);
-
+  const navigate = useNavigate()
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const { login } = useContext(AuthContext);
 
   const handleClick = async (e) => {
     e.preventDefault();
 
     try {
       await axios.post("http://localhost:8800/api/auth/register", inputs);
-      alert("User created successfully");
+      await login(inputs);
+      navigate("/")
     } catch (err) {
       setErr(err.response.data);
     }
