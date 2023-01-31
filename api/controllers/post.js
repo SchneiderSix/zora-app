@@ -62,25 +62,21 @@ export const addPost = (req, res) => {
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
-    let redo = 0
-    do
-    {
+    let redo = 0;
+    do {
       // min 10000000
       // max 99999999
-      var uid = getRandomId(10000000, 99999999)
+      var uid = getRandomId(10000000, 99999999);
       let q_id = "SELECT * FROM `posts` WHERE `id`=?";
       db.query(q_id, [+uid], (err, data) => {
         if (err) return res.status(500).json(err);
-        if (data)
-        {
+        if (data) {
           redo = 1;
-        }
-        else
-        {
+        } else {
           redo = 0;
         }
-      })
-    }while(redo == 1);
+      });
+    } while (redo == 1);
 
     const q =
       "INSERT INTO posts(`id`, `desc`, `img`, `createdAt`, `userId`) VALUES (?)";
@@ -113,6 +109,20 @@ export const deletePost = (req, res) => {
         return res.status(200).json("Post has been deleted.");
       return res.status(403).json("You can delete only your post");
     });
+  });
+};
+
+/*Get current feed, help cosine to don't recommend post from current feed*/
+export const getFeedFromUser = (req, res) => {
+  const userId = req.params.userId;
+  const q = `SELECT posts.id, posts.desc FROM posts LEFT JOIN relationships AS r ON (posts.userid=r.followedUserId) WHERE r.followerUserId=${userId} OR posts.userid=${userId} ORDER BY posts.createdAt DESC`;
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      console.log(err);
+    }
   });
 };
 

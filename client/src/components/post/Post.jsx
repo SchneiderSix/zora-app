@@ -12,10 +12,15 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import { selectUnstyledClasses } from "@mui/base";
+import * as stringSimilarity from "string-similarity";
 
 
 const Post = ({ post }) => {
+  const cosine = (txt, arr) => {
+    const matches = stringSimilarity.findBestMatch(txt, arr);
+    /*console.log(matches["bestMatch"]["target"]);*/
+    return (matches["bestMatch"]["target"]);
+  };
   var decision = null
   var chosen = null
   const [commentOpen, setCommentOpen] = useState(false);
@@ -68,12 +73,56 @@ const Post = ({ post }) => {
   const handleYes = () => {
     decision = 1
     mutation.mutate(data.includes(currentUser.id));
-    this.forceUpdate();
+    /*working in cosine*/
+    /*Get feed to don't recommend post from current feed*/
+    var currFeedId = [];
+    makeRequest.get(`/posts/feed/${currentUser.id}`).then((res) => {
+      for (let i  in res.data) {
+        currFeedId.push(res.data[i].id);
+      };
+      /*console.log(currFeedId);*/
+      /*Size === 0 error*/
+      const sameArray = [];
+      const descOb = {};
+      console.log(post.desc);
+      /*Get users that liked the same post*/
+      makeRequest.get(`likes/${currentUser.id}/${post.id}`).then((response) => {
+        /*console.log(response.data);*/
+        for (let i in response.data) {
+          /*console.log("UserID: " + response.data[i]["id"] + " PostID: " + post.id);*/
+          /*Save 5 userIds into array*/
+          sameArray.push(response.data[i]["id"]);};
+        for (let i of sameArray) {
+          /*Get last 3 posts of every user*/
+          makeRequest.get(`likes/related/${i}/${post.id}`).then((res) => {
+            /*console.log(res);*/
+            for (var j = 0; j < Object.keys(res.data).length; j++) {
+              if (res.data[j]["desc"] && !(descOb["postId"]) && !(currFeedId.includes(res.data[j]["postId"]))) {
+                /*Save postId-dec into ob*/
+                descOb[res.data[j]["postId"]] = res.data[j]["desc"];
+              };
+            };
+            /*if (j  === Object.keys(res.data).length) console.log("Last Number of sameArr: " +sameArray.at(-1) + "  Current iterator: " + i);
+            if (i === sameArray.at(-1)) console.log("This is -1 Current iterator: " + j +" Len res.data: "+Object.keys(res.data).length);*/
+            /*Last iteration*/
+            if ((i === sameArray.at(-1)) && (j  === Object.keys(res.data).length)) {
+              /*console.log(descOb);*/
+              console.log("Cosine:");
+              if (Object.keys(descOb).length) {
+                const cs = cosine(post.desc, Object.values(descOb));
+                if (cs) {
+                  console.log("PostId: " + Object.keys(descOb).find(key => descOb[key] === cs) + " PostDesc: " + cs);
+                };
+              };
+            };
+          });
+        };
+      });
+    });
   };
   const handleNo = () => {
     decision = 0
     mutation.mutate(data.includes(currentUser.id));
-    this.forceUpdate();
   };
 
   const handleDelete = () => {
