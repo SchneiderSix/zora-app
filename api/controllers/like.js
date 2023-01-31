@@ -24,12 +24,12 @@ export const addLike = (req, res) => {
       try{
         if (req.body.decision === result[0]['yes_no']){
           del(userInfo.id, req.body.postId)
-          return
+          return res.status(200).json("Post like has been deleted.");
         }
         else if(req.body.decision !== result[0]['yes_no']){
           //del(userInfo.id, req.body.postId)
           sw(userInfo.id, req.body.postId, req.body.decision)
-          return
+          return res.status(200).json("Post like has been updated.");
         }
       }
       catch(e){
