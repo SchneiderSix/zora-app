@@ -68,10 +68,12 @@ const Post = ({ post }) => {
   const handleYes = () => {
     decision = 1
     mutation.mutate(data.includes(currentUser.id));
+    this.forceUpdate();
   };
   const handleNo = () => {
     decision = 0
     mutation.mutate(data.includes(currentUser.id));
+    this.forceUpdate();
   };
 
   const handleDelete = () => {
