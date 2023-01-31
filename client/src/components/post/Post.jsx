@@ -120,7 +120,13 @@ const Post = ({ post }) => {
               />
             ) : (
               <FavoriteBorderOutlinedIcon
-              onClick={handleYes}/>
+              onClick={
+                function (){
+                  handleYes()
+                  this.forceUpdate();
+                }
+                }/>
+
             )}
             {yes} Yes
           </div>

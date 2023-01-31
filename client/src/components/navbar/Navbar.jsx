@@ -43,23 +43,21 @@ const Navbar = () => {
         <Link to="/" style={{ textDecoration: "none" }}>
           <span style={darkMode ? ({ color: "rgb(110, 199, 157)" }) : ({ color: "black" })}>Zora</span>
         </Link>
-        <HomeOutlinedIcon />
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
-        <GridViewOutlinedIcon />
-        <div className="search">
-          <input type="text" placeholder="Search Users..." onChange={(e) => setSearchInput(e.target.value)}></input>
-          <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
-        </div>
+      </div>
+      <div className="search">
+        <input type="text" placeholder="Search Users..." onChange={(e) => setSearchInput(e.target.value)}></input>
+        <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
       </div>
       <div className="right">
       <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
           <PersonOutlinedIcon />
         </Link>
-        <EmailOutlinedIcon />
+
         <NotificationsOutlinedIcon />
         <div className="user">
           <img
