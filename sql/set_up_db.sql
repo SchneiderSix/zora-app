@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int NOT NULL,
   `desc` varchar(200) DEFAULT NULL,
-  `img` varchar(200) DEFAULT NULL,
+  `img` varchar(200) DEFAULT NULL, /*Put image's name if user upload img to folder 'uploads'*/
   `userid` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `relationships` (
   CONSTRAINT `followedUser` FOREIGN KEY (`followedUserId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `followerUser` FOREIGN KEY (`followerUserId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+/*Implement Google API system upload*/
 CREATE TABLE IF NOT EXISTS `images` (
   `id` VARCHAR(500) NOT NULL,
   `authorId` INT NOT NULL,
