@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `profilePic` varchar(100) DEFAULT 'dio-based.png',
   `city` varchar(45) DEFAULT NULL,
   `website` varchar(45) DEFAULT NULL,
+  `recommendedPostIds` json DEFAULT NULL,
+  `recommendedFriendIds` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -66,19 +68,10 @@ CREATE TABLE IF NOT EXISTS `relationships` (
   CONSTRAINT `followerUser` FOREIGN KEY (`followerUserId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `stories` (
-  `id` int NOT NULL,
-  `img` varchar(200) NOT NULL,
-  `userId` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `storyUserId_idx` (`userId`),
-  CONSTRAINT `storyUserId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE IF NOT EXISTS `images` (
   `id` VARCHAR(500) NOT NULL,
-  `type` VARCHAR(500) NOT NULL,
   `authorId` INT NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT `authorId` FOREIGN KEY (`authorId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
