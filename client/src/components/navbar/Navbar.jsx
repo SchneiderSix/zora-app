@@ -20,7 +20,6 @@ import {useNavigate} from 'react-router-dom';
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
-  const [cu, setcu] = useState(currentUser);
 
   const [searchInput, setSearchInput] = useState('');
   const navi = useNavigate();
