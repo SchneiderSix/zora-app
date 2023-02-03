@@ -24,7 +24,7 @@ export const addLike = (req, res) => {
         if (err) return res.status(500).json(err);
         let result = Object.values(JSON.parse(JSON.stringify(yes_no)));
         try {
-          if (req.body.decision === result[0]["yes_no"]) {
+          if (req.body.decision === result[0]?.["yes_no"]) {
             del(userInfo.id, req.body.postId);
             return res.status(200).json("Post like has been deleted.");
           } else if (req.body.decision !== result[0]["yes_no"]) {
@@ -33,7 +33,7 @@ export const addLike = (req, res) => {
             return res.status(200).json("Post like has been updated.");
           }
         } catch (e) {
-          console.log(e);
+          //console.log(e);
           let redo = 0;
           do {
             // min 10000000
