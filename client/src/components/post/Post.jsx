@@ -112,6 +112,8 @@ const Post = ({ post }) => {
                 const cs = cosine(post.desc, Object.values(descOb));
                 if (cs) {
                   console.log("PostId: " + Object.keys(descOb).find(key => descOb[key] === cs) + " PostDesc: " + cs);
+                  /*Put post id into recommendedPostIds*/
+                  try {makeRequest.put(`users/reco/post/${currentUser.id}/${Object.keys(descOb).find(key => descOb[key] === cs)}`)} catch (e) {};
                 };
               };
             };

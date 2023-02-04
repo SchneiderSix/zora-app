@@ -65,3 +65,20 @@ export const updateUser = (req, res) => {
     );
   });
 };
+
+/*Insert recommendedPostId into "recommendedPostIds"*/
+export const recommendPost = (req, res) => {
+  const userId = req.params.userId;
+  const postId = req.params.postId;
+  /*Add recommendedPostId as string (because JSON_SEARCH can search strings not ints and that function is needed to delete specific id from list with many ids) or delete it from array*/
+  const q = `UPDATE users SET recommendedPostIds = CASE WHEN JSON_CONTAINS((select recommendedPostIds FROM (SELECT recommendedPostIds FROM users WHERE users.id = ${userId}) AS reco), '["${postId}"]') = 0 THEN JSON_ARRAY_APPEND(recommendedPostIds, '$', "${postId}") WHEN JSON_LENGTH(recommendedPostIds) = 1 THEN JSON_REMOVE(recommendedPostIds, '$[0]') ELSE JSON_REMOVE(recommendedPostIds, REPLACE(JSON_SEARCH(recommendedPostIds, "one", ${postId}), '"', '')) END WHERE users.id = ${userId}`;
+
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};
