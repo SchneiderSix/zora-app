@@ -45,6 +45,9 @@ export const register = (req, res) => {
       req.body.email,
       hashedPassword,
       req.body.name,
+      /*Set empty array for "recommendedPostIds" and "recommendedFriendIds". Needed to append ids*/
+      "[]",
+      "[]",
     ];
 
     db.query(q, [values], (err, data) => {
