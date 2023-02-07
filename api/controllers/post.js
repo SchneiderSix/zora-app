@@ -11,21 +11,23 @@ export const getPosts = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
 
     console.log(userId);
+    if (userId !== "undefined") {
+      const q = `SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) WHERE p.userId = ${userId} ORDER BY p.createdAt DESC`;
+      const values = [userId];
 
-    const q =
-      userId !== "undefined"
-        ? `SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) WHERE p.userId = ? ORDER BY p.createdAt DESC`
-        : `SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId)
-    LEFT JOIN relationships AS r ON (p.userId = r.followedUserId) WHERE r.followerUserId= ? OR p.userId =?
-    ORDER BY p.createdAt DESC`;
+      db.query(q, values, (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json(data);
+      });
+    } else {
+      const q = `SELECT p.*, users.id AS userId, name, profilePic FROM posts AS p JOIN users ON (users.id = p.userid) WHERE REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedPostIds FROM users WHERE users.id = ${userInfo.id}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', p.id, ']'), '%') UNION SELECT p.*, u.id AS userId, name, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) LEFT JOIN relationships AS r ON (p.userId = r.followedUserId) WHERE r.followerUserId = ${userInfo.id} OR p.userId = ${userInfo.id} ORDER BY createdAt DESC`;
+      const values = [userInfo.id, userInfo.id];
 
-    const values =
-      userId !== "undefined" ? [userId] : [userInfo.id, userInfo.id];
-
-    db.query(q, values, (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json(data);
-    });
+      db.query(q, values, (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json(data);
+      });
+    }
   });
 };
 
