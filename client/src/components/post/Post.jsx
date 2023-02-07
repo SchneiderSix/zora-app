@@ -139,6 +139,9 @@ const Post = ({ post }) => {
   };
   return (
     <div className="post">
+        <div className="sum_decisions">
+            {yes - no}
+        </div>
       <div className="container">
         <div className="user">
           <div className="userInfo">
