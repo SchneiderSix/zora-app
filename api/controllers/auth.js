@@ -2,7 +2,6 @@ import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 export const register = (req, res) => {
   //CHECK USER IF EXISTS
 
@@ -16,28 +15,24 @@ export const register = (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-    let redo = 0
-    do
-    {
+    let redo = 0;
+    do {
       // min 10000000
       // max 99999999
-      var uid = getRandomId(10000000, 99999999)
+      var uid = getRandomId(10000000, 99999999);
       let q_id = "SELECT * FROM `users` WHERE `id`=?";
       db.query(q_id, [+uid], (err, data) => {
         if (err) return res.status(500).json(err);
-        if (data)
-        {
+        if (data) {
           redo = 1;
-        }
-        else
-        {
+        } else {
           redo = 0;
         }
-      })
-    }while(redo == 1);
-    
+      });
+    } while (redo == 1);
+
     const q =
-    "INSERT INTO users (`id`, `username`,`email`,`password`,`name`) VALUE (?)";
+      "INSERT INTO users (`id`, `username`,`email`,`password`,`name`,`recommendedPostIds`,`recommendedFriendIds`) VALUE (?)";
 
     const values = [
       uid,
@@ -86,12 +81,14 @@ export const login = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("accessToken",{
-    secure:true,
-    sameSite:"none"
-  }).status(200).json("User has been logged out.")
+  res
+    .clearCookie("accessToken", {
+      secure: true,
+      sameSite: "none",
+    })
+    .status(200)
+    .json("User has been logged out.");
 };
-
 
 function getRandomId(min, max) {
   min = Math.ceil(min);
