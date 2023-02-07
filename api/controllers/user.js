@@ -1,5 +1,6 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
+import createReadStream from "fs";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -81,4 +82,13 @@ export const recommendPost = (req, res) => {
       console.log(err);
     }
   });
+};
+
+export const uploadImage = (req, res) => {
+  try {
+    const opFile = createReadStream(req.file);
+    console.log('Readed successfully!!!!!');
+  } catch (err) {
+    console.log("THE ERROR: ", err);
+  }
 };

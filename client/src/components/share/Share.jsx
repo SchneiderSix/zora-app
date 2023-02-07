@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import axios from "axios";
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
@@ -24,8 +25,12 @@ const Share = () => {
         setFile(null);
         return;
       } else {
-        const res = await makeRequest.post("/upload", formData);
-        return res.data;
+        try {
+          const res = await axios.post("localhost:3000/uploadImage", formData)
+          return res.data;
+        } catch (exception) {
+          console.log(exception);
+        }
       };
 
     } catch (err) {
