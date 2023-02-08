@@ -11,31 +11,22 @@ const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
 
-  const upload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      /*Check extensions of file*/
-      const exts = ['.jpg', '.png', '.gif', 'jpeg'];
-      let fileName = file.name;
-      if (!(new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName)) {
-        alert('Please put only jpg, png, gif and jpeg files' + fileName);
-        fileName = "";
-        setFile(null);
-        return;
-      } else {
-        try {
-          const res = await axios.post("localhost:3000/uploadImage", formData)
-          return res.data;
-        } catch (exception) {
-          console.log(exception);
-        }
-      };
-
-    } catch (err) {
-      console.log(err);
+  const upload = async (e) => {
+    e.preventDefault();
+    let formdata = new FormData();
+    formdata.append("file", file.data);
+    const validType = ['image/jpg', 'image/png', 'image/gif', 'image/jpeg'];
+    if (!validType.find(type => type === file.type)) {
+      alert("Invalid type!!!!");
+      return;
     }
+    const response = await fetch("http://localhost:8800/uploadImage", {
+      method: 'POST',
+      body: formdata,
+    });
+
+    const responseBody = await response.json();
+    if (response) setUrl(responseBody.fileURL);
   };
 
   const { currentUser } = useContext(AuthContext);
@@ -53,6 +44,15 @@ const Share = () => {
       },
     }
   );
+
+  const handleFileChange = (e) => {
+    const file = {
+      preview: URL.createObjectURL(e.target.files[0]),
+      data: e.target.files[0],
+    };
+    setFile(file);
+  };
+
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -91,7 +91,7 @@ const Share = () => {
               type="file"
               id="file"
               style={{ display: "none" }}
-              onChange={(e) => setFile(e.target.files[0])}
+              onChange={handleFileChange}
             />
             <label htmlFor="file">
               <div className="item">
