@@ -133,3 +133,8 @@ function getRandomId(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export const  getFirstQuestions = (req, res) => {
+  return res.status(200).json(1234234234)
+}
+

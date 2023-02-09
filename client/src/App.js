@@ -80,7 +80,9 @@ function App() {
     {
       path: "/start",
       element: (
-        <Start/>
+        <QueryClientProvider client={queryClient}>
+          <Start/>
+        </QueryClientProvider>
       )
     },
   ]);
