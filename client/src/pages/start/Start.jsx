@@ -10,8 +10,12 @@ const Start = () => {
   return (
     <div className="start">
       <div className="questionCard">
-        <Question/>
-        <button onClick={console.log(questionCounter)}> Next </button>
+        <div className="question">
+          <Question/>
+        </div>
+        <div className="nextbtn">
+          <button onClick={console.log(questionCounter)}> Next </button>
+        </div>
       </div>
     </div>
   )
