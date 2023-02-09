@@ -1,9 +1,10 @@
 import { makeRequest } from "../../axios";
 import { useQuery } from "@tanstack/react-query";
+import Post from "../../components/post/Post";
+import "./start.scss";
+import { Link } from "react-router-dom";
 
-const Question = () => {
-  
-  const questions = undefined
+const Question = ({counter}) => {
 
   const { isLoading, error, data } = useQuery(["posts"], () =>
     makeRequest.get("/posts/first-questions").then((res) => {
@@ -11,16 +12,20 @@ const Question = () => {
     })
   )
 
+  
+  
   return (
-    <div className="question">
-      {error ? "Something went wrong!"
-      : isLoading
-      ? "loading"
-      : data
+      <div className="question">
+        {error ? "Something went wrong!"
+        : isLoading
+        ? "loading"
+        : data[counter]['desc']
       }
-    </div>
+      </div>
+      
   )
-
+  
+  
 }
 
 export default Question;

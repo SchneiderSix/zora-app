@@ -6,19 +6,30 @@ import axios from "axios";
 import { AuthContext } from "../../context/authContext";
 
 const Start = () => {
-  var questionCounter = 0;
+  var i = 0
+  const reRender = () => {
+    // calling the forceUpdate() method
+    this.forceUpdate();
+  };
+
   return (
+
     <div className="start">
       <div className="questionCard">
-        <div className="question">
-          <Question/>
-        </div>
+        <Question counter={i}/>
         <div className="nextbtn">
-          <button onClick={console.log(questionCounter)}> Next </button>
+          <button onClick={() => next()}> Next </button>
         </div>
       </div>
+      
     </div>
   )
+  function next() {
+    i++
+    console.log(i)
+
+  }
+
 }
 
 

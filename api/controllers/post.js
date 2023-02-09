@@ -135,6 +135,9 @@ function getRandomId(min, max) {
 }
 
 export const  getFirstQuestions = (req, res) => {
-  return res.status(200).json(1234234234)
+  db.query("SELECT * FROM posts WHERE userid=0;", (err, data) => {
+    if (err) return res.status(500).json(err)
+    return res.status(200).json(data)
+  })
 }
 
