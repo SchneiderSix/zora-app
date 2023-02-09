@@ -1,0 +1,24 @@
+.start {
+  height: 100vh;
+  width: 100%;
+  background: #333;
+  color: #EEE;
+
+  display: grid;
+  place-items: center;
+
+  .questionCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 700px;
+    height: 500px;
+    border-radius: 4px;
+    border: 1px solid #EEE;
+    background: #444;
+
+    button {
+    }
+  }
+
+}
