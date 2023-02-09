@@ -1,7 +1,10 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
+import multer from 'multer';
+import path from 'path';
 import createReadStream from "fs";
 import uploadAuth from "../../gcs/index.js";
+import mime from 'mime';
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -86,11 +89,4 @@ export const recommendPost = (req, res) => {
 };
 
 export const uploadImage = (req, res) => {
-  try {
-    const response = uploadAuth(req.file);
-    res.status(200).json({ 'status':  response.status, 'fileURL': `https://drive.google.com/uc?export=view&id=${response.fileId}`});
-    console.log('Success!');
-  } catch (err) {
-    console.log("THE ERROR: ", err);
-  }
 };

@@ -1,8 +1,13 @@
-import Multer, { memoryStorage } from "multer";
+const multer = require('multer');
+const path = require('path');
 
-export const multer = Multer({
-    storage: Multer.memoryStorage(),
-    limits: {
-        fileSize: 5 * 1024 * 1024,
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'temporary/')
     },
-  });
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+export var upload = multer({ storage: storage });
