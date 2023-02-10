@@ -8,11 +8,56 @@ const { file } = pkg;
 import mime from 'mime';
 import { Stream } from 'stream';
 
+async function generatePublicUrl(fileId) {
+    try {
+        const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
+        const CLIENT_SECRET = "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";
+        const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+        const REFRESH_TOKEN = "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
+        // Using the credentials to authenticate in Google API
+        const oauth2Client = new google.auth.OAuth2 (
+            CLIENT_ID,
+            CLIENT_SECRET,
+            REDIRECT_URI
+        );
+
+        //Last auth step
+        oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+        // Setting Drive API
+        const drive = google.drive({
+            version: 'v3',
+            auth: oauth2Client,
+        });
+
+        await drive.permissions.create({
+            fileId: fileId,
+            requestBody: {
+                role: 'reader',
+                type: 'anyone',
+            },
+        });
+
+        const result = await drive.files.get({
+            fileId: fileId,
+            fields: 'webViewLink, webContentLink',
+        });
+        //console.log(result.data.webViewLink);
+        const toParse = result.data.webViewLink.split('/');
+        //console.log(toParse[5]);
+        const fullLink = 'https://drive.google.com/uc?export=view&id=' + toParse[5]; // Concatenating the default share link with the File ID to the get link to paste in the HTML
+        return ({'status': 'OK', 'viewLink': fullLink})
+
+    } catch(error) {
+        return ({'status': 'FAILED'});
+    }
+}
+
 export default async function uploadAuth(filePath, fileType) {
-    const CLIENT_ID = "";
-    const CLIENT_SECRET = "";
-    const REDIRECT_URI = "";
-    const REFRESH_TOKEN = "";
+    const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
+    const CLIENT_SECRET = "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";
+    const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+    const REFRESH_TOKEN = "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
     // Using the credentials to authenticate in Google API
     const oauth2Client = new google.auth.OAuth2 (
         CLIENT_ID,
@@ -41,47 +86,18 @@ export default async function uploadAuth(filePath, fileType) {
             },
         });
         // console.log(response.data);
-        return {'status': 'OK', 'fileId': response.data.id, 'ext': mime.getExtension(file)}
+        const urlResp = await generatePublicUrl(response.data.id);
+        if (urlResp.status === 'FAILED') {
+            return ({'status': 'FAILED'});
+        }
+
+        return {'status': 'OK', 'fileURL': urlResp.viewLink, 'ext': mime.getExtension(file)}
         // Here we have to store 'response.data.id' in the DB to store the Image ID
     } catch(error) {
         /* console.log(error.message); */
         return {'status': 'FAILED', 'fileId': null, 'ext': null};
     }
 }
-
-// const filepath = path.join(__dirname, 'path/to/the/file'); // In this case, we have to indicate the file passed via the HTML Form
-// const readStream = fs.createReadStream(filepath); // Reading the bytes of the file
-
-// Try to upload a file to google drive
-
-/*uploadFile();*/
-
-// async function generatePublicUrl() {
-//     try {
-//         const fileId = 'FILE_ID_HERE'; // The File ID stored in the DB
-
-//         await drive.permissions.create({
-//             fileId: fileId,
-//             requestBody: {
-//                 role: 'reader',
-//                 type: 'anyone',
-//             },
-//         });
-
-//         const result = await drive.files.get({
-//             fileId: fileId,
-//             fields: 'webViewLink, webContentLink',
-//         });
-//         console.log(result.data.webViewLink);
-//         const toParse = result.data.webViewLink.split('/');
-//         console.log(toParse[5]);
-//         const fullLink = 'https://drive.google.com/uc?export=view&id=' + toParse[5]; // Concatenating the default share link with the File ID to the get link to paste in the HTML
-//         console.log(fullLink);
-
-//     } catch(error) {
-//         console.log(error.message);
-//     }
-// }
 
 /*generatePublicUrl();
 console.log(myLink);*/

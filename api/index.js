@@ -9,10 +9,8 @@ import relationshipRoutes from "./routes/relationships.js";
 import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
-import pkg from '../gcs/index.js';
 import uploadAuth from '../gcs/index.js';
-import mime from 'mime';
-import sharp from "sharp";
+import generatePublicUrl from '../gcs/index.js';
 import fs from 'fs';
 
 //middlewares
@@ -58,7 +56,7 @@ const mulUpload = multer({ storage: mulStorage });
 
 app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
   const file = req.file;
-  console.log(file.filename);
+  // console.log(file.filename);
   const response = await uploadAuth(file.filename, file.mimetype);
   if (response.status === 'FAILED') {
     fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
@@ -71,6 +69,7 @@ app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
     res.status(400).json({'status': 'UPLOAD FAILED'});
   } else {
     console.log('Uploaded!');
+    console.log(response.fileURL);
     fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
       if (err) {
         console.log('Couldnt remove file!');
