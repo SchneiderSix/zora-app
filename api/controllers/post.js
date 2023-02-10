@@ -133,3 +133,11 @@ function getRandomId(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export const  getFirstQuestions = (req, res) => {
+  db.query("SELECT * FROM posts WHERE userid=0;", (err, data) => {
+    if (err) return res.status(500).json(err)
+    return res.status(200).json(data)
+  })
+}
+
