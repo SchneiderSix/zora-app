@@ -8,17 +8,11 @@ const { file } = pkg;
 import mime from 'mime';
 import { Stream } from 'stream';
 
-export default async function uploadAuth(file, filename, fileType) {
-    // Getting the env variables
-   /*  const CLIENT_ID = process.env.CLIENT_ID;
-    const CLIENT_SECRET = process.env.CLIENT_SECRET;
-    const REDIRECT_URI = process.env.REDIRECT_URI;
-    const REFRESH_TOKEN = process.env.REFRESH_TOKEN; */
-    const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
-    const CLIENT_SECRET = "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";
-    const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-    const REFRESH_TOKEN = "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
-
+export default async function uploadAuth(filePath, fileType) {
+    const CLIENT_ID = "";
+    const CLIENT_SECRET = "";
+    const REDIRECT_URI = "";
+    const REFRESH_TOKEN = "";
     // Using the credentials to authenticate in Google API
     const oauth2Client = new google.auth.OAuth2 (
         CLIENT_ID,
@@ -35,15 +29,15 @@ export default async function uploadAuth(file, filename, fileType) {
         auth: oauth2Client,
     });
     try {
-        const openFile = fs.createReadStream(file);
+        const buffer = fs.createReadStream(`../client/public/upload/${filePath}`);
         const response = await drive.files.create({
             requestBody: {
-                name: file.originalname, // Here goes the filename that will be uploaded, example: ${user-id}.jpg
-                mimeType: file.mimeType, // The extension of the file
+                name: filePath, // Here goes the filename that will be uploaded, example: ${user-id}.jpg
+                mimeType: fileType, // The extension of the file
             },
             media: {
-                mimeType: file.mimeType,
-                body: /*fs.createReadStream(file)*/ openFile, // Here whe are passing the readed bytes of the image
+                mimeType: fileType,
+                body: buffer, // Here whe are passing the readed bytes of the image
             },
         });
         // console.log(response.data);
@@ -51,7 +45,7 @@ export default async function uploadAuth(file, filename, fileType) {
         // Here we have to store 'response.data.id' in the DB to store the Image ID
     } catch(error) {
         /* console.log(error.message); */
-        throw error;
+        return {'status': 'FAILED', 'fileId': null, 'ext': null};
     }
 }
 

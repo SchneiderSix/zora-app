@@ -10,6 +10,10 @@ import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
 import pkg from '../gcs/index.js';
+import uploadAuth from '../gcs/index.js';
+import mime from 'mime';
+import sharp from "sharp";
+import fs from 'fs';
 
 //middlewares
 app.use((req, res, next) => {
@@ -40,15 +44,41 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.status(200).json(file.filename);
 });
 
-app.post('/api/uploadImage', upload.single('file'), (req, res) => {
-  try {
-    const response = uploadAuth(req.file, `test-${Date.now()}`, mime.getType(req.file));
-    res.json({ 'status':  response.status, 'fileURL': `https://drive.google.com/uc?export=view&id=${response.fileId}`});
-    console.log('Success!');
-    console.log(response.ext);
-  } catch (err) {
-    res.json({ 'status': 'BAD REQUEST', 'fileURL': null })
-    console.log("THE ERROR: ", err);
+const mulStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './temp');
+  },
+  filename: function (req, file, cb) {
+    var id = path.extname(file.originalname) + Date.now();
+    cb(null, id);
+  }
+});
+
+const mulUpload = multer({ storage: mulStorage });
+
+app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
+  const file = req.file;
+  console.log(file.filename);
+  const response = await uploadAuth(file.filename, file.mimetype);
+  if (response.status === 'FAILED') {
+    fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
+      if (err) {
+        console.log('Couldnt remove file!');
+      } else {
+        console.log('File deleted')
+      }
+    });
+    res.status(400).json({'status': 'UPLOAD FAILED'});
+  } else {
+    console.log('Uploaded!');
+    fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
+      if (err) {
+        console.log('Couldnt remove file!');
+      } else {
+        console.log('File deleted')
+      }
+    });
+    res.status(200).json({'status': 'OK'});
   }
 });
 
