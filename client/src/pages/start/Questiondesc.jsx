@@ -1,11 +1,10 @@
-import "./post.scss";
+import "../../components/posts/posts.scss";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
-import Comments from "../comments/Comments";
 import { useState } from "react";
 import moment from "moment";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -139,31 +138,14 @@ const Post = ({ post }) => {
   };
   return (
     <div className="post">
-        <div className="sum_decisions">
-            {yes - no}
-        </div>
       <div className="container">
         <div className="user">
           <div className="userInfo">
             <img src={"/upload/"+post.profilePic} alt="" />
-            <div className="details">
-              <Link
-                to={`/profile/${post.userId}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <span className="name">{post.name}</span>
-              </Link>
-              <span className="date">{moment(post.createdAt).fromNow()}</span>
-            </div>
           </div>
-          <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && post.userId === currentUser.id && (
-            <button onClick={handleDelete}>delete</button>
-          )}
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img className={isActive ? "deactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
         </div>
         <div className="info">
           <div className="item">
@@ -178,8 +160,7 @@ const Post = ({ post }) => {
               <FavoriteBorderOutlinedIcon
               onClick={handleYes}
               />
-            )}
-            {yes} Yes
+            )}Yes
           </div>
           <div className="item">
             {isLoading ? (
@@ -193,19 +174,9 @@ const Post = ({ post }) => {
               <FavoriteBorderOutlinedIcon
               onClick={handleNo} 
               />
-            )}
-            {no} No
-          </div>
-          <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
-            <TextsmsOutlinedIcon />
-            See Comments
-          </div>
-          <div className="item">
-            <ShareOutlinedIcon />
-            Share
+            )}No
           </div>
         </div>
-        {commentOpen && <Comments postId={post.id} />}
       </div>
     </div>
   );

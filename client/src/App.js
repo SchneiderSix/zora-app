@@ -11,6 +11,7 @@ import LeftBar from "./components/leftBar/LeftBar";
 import RightBar from "./components/rightBar/RightBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import Start from "./pages/start/Start";
 import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
@@ -75,6 +76,14 @@ function App() {
     {
       path: "/register",
       element: <Register />,
+    },
+    {
+      path: "/start",
+      element: (
+        <QueryClientProvider client={queryClient}>
+          <Start/>
+        </QueryClientProvider>
+      )
     },
   ]);
 
