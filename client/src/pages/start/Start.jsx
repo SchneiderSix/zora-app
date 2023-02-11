@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./start.scss";
 import Question from "./Question";
@@ -6,29 +6,21 @@ import axios from "axios";
 import { AuthContext } from "../../context/authContext";
 
 const Start = () => {
-  var i = 0
   const reRender = () => {
     // calling the forceUpdate() method
     this.forceUpdate();
   };
-
+  const navigate = useNavigate()
+  
   return (
 
     <div className="start">
       <div className="questionCard">
-        <Question counter={i}/>
-        <div className="nextbtn">
-          <button onClick={() => next()}> Next </button>
-        </div>
+        <Question counter={0}/>
       </div>
-      
     </div>
   )
-  function next() {
-    i++
-    console.log(i)
-
-  }
+  
 
 }
 

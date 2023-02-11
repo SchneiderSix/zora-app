@@ -135,6 +135,8 @@ function getRandomId(min, max) {
 }
 
 export const  getFirstQuestions = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
   db.query("SELECT * FROM posts WHERE userid=0;", (err, data) => {
     if (err) return res.status(500).json(err)
     return res.status(200).json(data)
