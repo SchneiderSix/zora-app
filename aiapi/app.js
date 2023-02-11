@@ -1,7 +1,8 @@
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const bp = require("body-parser");
-const stringSimilarity = require("string-similarity");
+import express from "express";
+import jwt from "jsonwebtoken";
+import bp from "body-parser";
+import stringSimilarity from "string-similarity";
+import { arrayMoveImmutable } from "array-move";
 
 const app = express();
 app.use(bp.json());
@@ -23,7 +24,7 @@ app.post("/maketok", (req, res) => {
     name: "John",
     email: "john@example.com",
   };
-  jwt.sign({ users }, "secretKey", { expiresIn: "30s" }, (err, token) => {
+  jwt.sign({ users }, "secretKey" /*, { expiresIn: "30s" }*/, (err, token) => {
     res.json({ token });
   });
 });
@@ -45,7 +46,7 @@ app.post("/cosine", verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(403);
     } else {
-      const words = req.query;
+      const words = req.body;
       let base = "";
       const arr = [];
       for (const [key, value] of Object.entries(words)) {
@@ -57,9 +58,21 @@ app.post("/cosine", verifyToken, (req, res) => {
       }
       const result = cosine(base, arr);
       let ky = Object.keys(words).find((key) => words[key] === result);
-      if (ky.startsWith("?")) ky = ky.replace("?", "");
       const recommendation = {};
       recommendation[ky] = result;
+      res.json({ recommendation });
+    }
+  });
+});
+
+//Route simple recommend friend, first key is the original user
+app.post("/friend", verifyToken, (req, res) => {
+  jwt.verify(req.token, "secretKey", (err, authData) => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      const recommendation = {};
+      recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
       res.json({ recommendation });
     }
   });
@@ -81,6 +94,39 @@ function verifyToken(req, res, next) {
 const cosine = (txt, arr) => {
   const matches = stringSimilarity.findBestMatch(txt, arr);
   return matches["bestMatch"]["target"];
+};
+
+//Simple recommend friend
+const simpleFriend = (data) => {
+  const user = Object.keys(data)[0];
+  const nu = { ...data };
+  delete nu[user];
+
+  Object.keys(nu).forEach((key) => {
+    nu[key] = nu[key].split("[").toString().split("]").toString().split('"');
+  });
+
+  let recommendedUser = [];
+
+  for (let f in nu) {
+    if (data[user].includes(f)) {
+    }
+    for (let f1 in nu[f]) {
+      if (!data[user].includes(nu[f][f1]) && nu[f][f1] !== user) {
+        if (recommendedUser.includes(nu[f][f1])) {
+          if (recommendedUser.indexOf(nu[f][f1]) !== 0)
+            recommendedUser = arrayMoveImmutable(
+              recommendedUser,
+              recommendedUser.indexOf(nu[f][f1]),
+              recommendedUser.indexOf(nu[f][f1]) - 1
+            );
+        } else {
+          recommendedUser.push(nu[f][f1]);
+        }
+      }
+    }
+  }
+  return recommendedUser;
 };
 
 app.listen(3000, function () {
