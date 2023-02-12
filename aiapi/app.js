@@ -73,7 +73,7 @@ app.post("/cosine", verifyToken, (req, res) => {
   });
 });
 
-//Route simple recommend friend, first key is the original user
+//Route simple friend, first key is the original user
 app.post("/friend", verifyToken, (req, res) => {
   jwt.verify(req.token, "secretKey", (err, authData) => {
     if (err) {
@@ -119,10 +119,15 @@ const cosine = (txt, arr) => {
   return matches["bestMatch"]["target"];
 };
 
-//Simple recommend friend
+//Simple friend
 const simpleFriend = (data) => {
   const user = Object.keys(data)[0];
   const nu = { ...data };
+  let block = "";
+  if (nu["Blocked"]) {
+    block = nu["Blocked"];
+    delete nu["Blocked"];
+  }
   delete nu[user];
 
   Object.keys(nu).forEach((key) => {
@@ -132,10 +137,12 @@ const simpleFriend = (data) => {
   let recommendedUser = [];
 
   for (let f in nu) {
-    if (data[user].includes(f)) {
-    }
     for (let f1 in nu[f]) {
-      if (!data[user].includes(nu[f][f1]) && nu[f][f1] !== user) {
+      if (
+        !data[user].includes(nu[f][f1]) &&
+        nu[f][f1] !== user &&
+        !block.includes(nu[f][f1])
+      ) {
         if (recommendedUser.includes(nu[f][f1])) {
           if (recommendedUser.indexOf(nu[f][f1]) !== 0)
             recommendedUser = arrayMoveImmutable(
