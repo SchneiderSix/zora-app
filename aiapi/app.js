@@ -1,8 +1,16 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bp from "body-parser";
+import axios from "axios";
 import stringSimilarity from "string-similarity";
 import { arrayMoveImmutable } from "array-move";
+import * as mobilenet from "@tensorflow-models/mobilenet";
+import * as tfnode from "@tensorflow/tfjs-node";
+import path from "path";
+import fs from "fs";
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const app = express();
 app.use(bp.json());
@@ -78,6 +86,21 @@ app.post("/friend", verifyToken, (req, res) => {
   });
 });
 
+//Route predict given image
+app.post("/image", verifyToken, (req, res) => {
+  jwt.verify(req.token, "secretKey", (err, authData) => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      downloadImage(Object.values(req.body)[0])
+        .then(() => classify("images/test.jpg"))
+        .then((val) => {
+          res.json(val);
+        });
+    }
+  });
+});
+
 //Authorization: Bearer <token>
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
@@ -127,6 +150,44 @@ const simpleFriend = (data) => {
     }
   }
   return recommendedUser;
+};
+
+//Clasify image
+const classify = async (imagePath) => {
+  const image = fs.readFileSync(imagePath);
+  const decodedImage = tfnode.node.decodeImage(image, 3);
+
+  const model = await mobilenet.load();
+  const predictions = await model.classify(decodedImage);
+  fs.unlink("images/" + "test.jpg", (err) => {
+    if (err) {
+      throw err;
+    }
+    console.log("Delete File successfully.");
+  });
+  return predictions;
+};
+
+//Download img from internet
+const downloadImage = async (url) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+
+  const defPath = path.resolve(__dirname, "images", "test.jpg");
+  const writer = fs.createWriteStream(defPath);
+
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
+  });
+
+  response.data.pipe(writer);
+
+  return new Promise((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
 };
 
 app.listen(3000, function () {
