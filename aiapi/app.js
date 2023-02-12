@@ -128,7 +128,6 @@ const simpleFriend = (data) => {
     block = nu["Blocked"];
     delete nu["Blocked"];
   }
-  console.log(block);
   delete nu[user];
 
   Object.keys(nu).forEach((key) => {
@@ -140,9 +139,9 @@ const simpleFriend = (data) => {
   for (let f in nu) {
     for (let f1 in nu[f]) {
       if (
-        !data[user].includes(nu[f][f1]) &&
+        !checkList(data[user], nu[f][f1]) &&
         nu[f][f1] !== user &&
-        !block.includes(nu[f][f1])
+        !checkList(block, nu[f][f1])
       ) {
         if (recommendedUser.includes(nu[f][f1])) {
           if (recommendedUser.indexOf(nu[f][f1]) !== 0)
@@ -158,6 +157,17 @@ const simpleFriend = (data) => {
     }
   }
   return recommendedUser;
+};
+
+//Auxiliar function for simple friend block list
+const checkList = (mylist, name) => {
+  const arr = mylist.split("[").toString().split("]").toString().split('"');
+  for (const i of arr) {
+    if (i === name) {
+      return true;
+    }
+  }
+  return false;
 };
 
 //Clasify image
