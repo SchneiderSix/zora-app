@@ -128,6 +128,7 @@ const simpleFriend = (data) => {
     block = nu["Blocked"];
     delete nu["Blocked"];
   }
+  console.log(block);
   delete nu[user];
 
   Object.keys(nu).forEach((key) => {
