@@ -16,6 +16,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
+import { fontSize } from "@mui/system";
 
 
 const Profile = () => {
@@ -73,7 +74,9 @@ const Profile = () => {
             <div className="uInfo">
               
               <div className="center">
-                <span>{data.name}</span>
+                <span>{data.username}</span>
+                <span className="at">@{data.name}</span>
+
                 <div className="info">
                   <div className="item">
                    {data.city ? <PlaceIcon /> : ""}

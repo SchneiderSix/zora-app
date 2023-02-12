@@ -143,3 +143,7 @@ export const  getFirstQuestions = (req, res) => {
   })
 }
 
+export const searchEngine = (req, res) => {
+  console.log(req.text)
+  return res.status(200).json()
+}

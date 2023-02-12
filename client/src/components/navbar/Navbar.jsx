@@ -25,12 +25,19 @@ const Navbar = () => {
   const navi = useNavigate();
 
   const searchItems = () => {
-    makeRequest.get("/users/find/name/" + searchInput)
-    .then(res=> navi("/profile/" + res.data.id))
-    .then(()=> window.location.reload(false))
-    .catch(err=> console.log("User Not Found: " + err));
+    if (searchInput == ''){
+      setSearchInput('')
+      return navi("/")
+    }
+    if (searchInput[0] === '@') {
+      makeRequest.get("/users/find/name/" + searchInput.slice(1))
+      .then(res=> navi("/profile/" + res.data.id))
+      .then(()=> window.location.reload(false))
+      .catch(err=> console.log("User Not Found: " + err));
+    }
+    return navi("/search/" + searchInput, {searchInput})
   }
-
+  
   const reRender = () => {
     // calling the forceUpdate() method
     this.forceUpdate();
@@ -49,7 +56,7 @@ const Navbar = () => {
         )}
       </div>
       <div className="search">
-        <input type="text" placeholder="Search Users..." onChange={(e) => setSearchInput(e.target.value)}></input>
+        <input type="text" placeholder="Search users or posts..." onChange={(e) => setSearchInput(e.target.value)}></input>
         <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
       </div>
       <div className="right">

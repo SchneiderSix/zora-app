@@ -34,7 +34,6 @@ const Question = ({counter}) => {
       <div className="nextbtn">
       <button > Next </button>
       </div>
-        
     </>
 
   )
