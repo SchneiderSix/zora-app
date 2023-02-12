@@ -48,6 +48,50 @@ app.post("/verifytok", verifyToken, (req, res) => {
   });
 });
 
+//Mix algorithms
+app.post("/mix", verifyToken, (req, res) => {
+  jwt.verify(req.token, "secretKey", (err, authdata) => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      const algorithm = req.headers["algorithm"];
+      if (algorithm === "cosine") {
+        const words = req.body;
+        let base = "";
+        const arr = [];
+        for (const [key, value] of Object.entries(words)) {
+          if (key.startsWith("?")) {
+            base = value;
+          } else {
+            arr.push(value);
+          }
+        }
+        const result = cosine(base, arr);
+        let ky = Object.keys(words).find((key) => words[key] === result);
+        const recommendation = {};
+        recommendation[ky] = result;
+        res.json({ recommendation });
+      } else if (algorithm === "friend") {
+        const recommendation = {};
+        recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
+        res.json({ recommendation });
+      } else if (algorithm === "image") {
+        if (Object.values(req.body)[1]) {
+          res.sendStatus(403);
+        } else {
+          downloadImage(Object.values(req.body)[0])
+            .then(() => classify("images/test.jpg"))
+            .then((val) => {
+              res.json(val);
+            });
+        }
+      } else {
+        res.sendStatus(403);
+      }
+    }
+  });
+});
+
 //Route cosine simmilarity with given dictionary, the key of original post starts with '?'
 app.post("/cosine", verifyToken, (req, res) => {
   jwt.verify(req.token, "secretKey", (err, authData) => {
