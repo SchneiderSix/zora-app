@@ -138,10 +138,7 @@ const Post = ({ post }) => {
     setActive(!isActive);
   };
   return (
-    <div className="post">
-        <div className="sum_decisions">
-            {yes - no}
-        </div>
+    <div className="post"> 
       <div className="container">
         <div className="user">
           <div className="userInfo">
