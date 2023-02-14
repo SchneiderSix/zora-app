@@ -150,7 +150,7 @@ export const searchEngine = (req, res) => {
   const text = req.params.text
   const q = "SELECT * FROM posts WHERE posts.desc like ?"
 
-  db.query(q, [text], (err, data) => {
+  db.query(q, ['%' + text + '%'], (err, data) => {
     if (err) return res.status(500).json(err)
     return res.status(200).json(data)
   })
