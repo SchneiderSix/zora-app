@@ -34,8 +34,10 @@ const Update = ({ setOpenUpdate, user }) => {
         setProfile(null);
         return;
       } else {
-        const res = await makeRequest.post("/upload", formData);
-        return res.data;
+
+        // const res = await makeRequest.post(`/updateProfile/${user.id}`, formData);
+        const response = await makeRequest.post(`/updateProfile?userId=${user.id}`, formData)
+        // return res.data;
       };
     } catch (err) {
       console.log(err);
@@ -47,7 +49,7 @@ const Update = ({ setOpenUpdate, user }) => {
   };
 
   const queryClient = useQueryClient();
-
+  console.log(user.id);
   const mutation = useMutation(
     (user) => {
       return makeRequest.put("/users", user);

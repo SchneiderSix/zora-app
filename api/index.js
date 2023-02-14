@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import uploadAuth from '../gcs/index.js';
 import generatePublicUrl from '../gcs/index.js';
 import fs from 'fs';
+import { db } from "./connect.js";
 
 //middlewares
 app.use((req, res, next) => {
@@ -42,18 +43,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.status(200).json(file.filename);
 });
 
-const mulStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './temp');
-  },
-  filename: function (req, file, cb) {
-    var id = path.extname(file.originalname) + Date.now();
-    cb(null, id);
-  }
-});
-
-const mulUpload = multer({ storage: mulStorage });
-
 app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
   const file = req.file;
   // console.log(file.filename);
@@ -61,25 +50,39 @@ app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
   if (response.status === 'FAILED') {
     fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
       if (err) {
-        console.log('Couldnt remove file!');
+        // console.log('Couldnt remove file!');
       } else {
-        console.log('File deleted')
+        // console.log('File deleted')
       }
     });
     res.status(400).json({'status': 'UPLOAD FAILED'});
   } else {
-    console.log('Uploaded!');
-    console.log(response.fileURL);
+    // console.log('Uploaded!');
+    // console.log(response.fileURL);
     fs.unlink(`../client/public/upload/${file.filename}`, function (err) {
       if (err) {
-        console.log('Couldnt remove file!');
+        // console.log('Couldnt remove file!');
       } else {
-        console.log('File deleted')
+        // console.log('File deleted')
       }
     });
     res.status(200).json({'status': 'OK', 'imgLink': response.fileURL});
   }
 });
+
+app.post('/api/updateProfile', upload.single('file'), async(req, res) => {
+  const file = req.file;
+  const userID = req.params.userId;
+  console.log('In the route!')
+  const q = "SELECT `profilePic` FROM `users` WHERE id = ?"
+  db.query(q, [userID], (err, data) => {
+    if (err) return res.status(500).json(err);
+    // if (data.length) console.log(data);
+    console.log('Entered query!');
+    res.status(200).json({ 'status': 'OK' });
+  })
+  // console.log('File received');
+})
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

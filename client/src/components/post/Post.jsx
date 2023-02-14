@@ -160,7 +160,10 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img className={isActive ? "deactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
+          
+          <div className={post.img ? "postImage": "nonImage"}>
+          <img className={isActive ? "deactived" : "active"} src={post.img} alt=""  onClick={handleClickImg}/>
+          </div>
         </div>
         <div className="info">
           <div className="item">

@@ -11,7 +11,19 @@
 
     .container {
       padding: 20px;
+      .nonImage{
+        display: none;
+      }
+      .postImage {
+        width: 100%;
+        height: auto;
+        padding-top: 1em;
 
+        img{
+          width: inherit;
+          object-fit: cover;
+        }
+      }
       .user {
         display: flex;
         align-items: center;

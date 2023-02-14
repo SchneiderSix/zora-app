@@ -53,6 +53,36 @@ async function generatePublicUrl(fileId) {
     }
 }
 
+async function updatePfp(fileId) {
+    const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
+    const CLIENT_SECRET = "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";
+    const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+    const REFRESH_TOKEN = "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
+    // Using the credentials to authenticate in Google API
+    const oauth2Client = new google.auth.OAuth2 (
+        CLIENT_ID,
+        CLIENT_SECRET,
+        REDIRECT_URI
+    );
+
+    //Last auth step
+    oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+    // Setting Drive API
+    const drive = google.drive({
+        version: 'v3',
+        auth: oauth2Client,
+    });
+    try {
+        const response = await drive.files.delete({
+            'fileId': fileId
+        });
+    } catch(error) {
+        throw(error);
+    }
+
+}
+
 export default async function uploadAuth(filePath, fileType) {
     const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
     const CLIENT_SECRET = "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";

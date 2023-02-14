@@ -26,7 +26,7 @@ const Share = () => {
       } else {
         const res = await makeRequest.post("/uploadImage", formData);
         console.log(res.data.imgLink);
-        return res.data;
+        return res.data.imgLink;
       };
 
     } catch (err) {
