@@ -20,6 +20,8 @@
     "body-parser": "^1.20.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
+    "langcheck": "^2.3.2",
+    "natural": "^6.2.0",
     "string-similarity": "^4.0.4"
   }
 }
