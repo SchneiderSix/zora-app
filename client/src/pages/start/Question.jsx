@@ -6,21 +6,18 @@ import "./start.scss";
 import "../../components/posts/posts.scss";
 import { Link, useNavigate } from "react-router-dom";
 import Questiondesc from "./Questiondesc"
+import { AuthContext } from "../../context/authContext";
+import axios from 'axios';
 
 const Question = ({counter}) => {
 
-  const reRender = () => {
-    // calling the forceUpdate() method
-    this.forceUpdate();
-  };
+  const { currentUser } = useContext(AuthContext);
   const { isLoading, error, data } = useQuery(["posts"], () =>
     makeRequest.get("/posts/first-questions").then((res) => {
       return res.data
     })
   )
 
-  const [, updateState] = useState();
-  const forceUpdate = useCallback(() => updateState({}), []);
   const navigate = useNavigate()
   return (
     <> 
@@ -32,9 +29,8 @@ const Question = ({counter}) => {
         }
       </div>
       <div className="nextbtn">
-      <button > Next </button>
+      <button onClick={() =>navigate("/")}> Submit </button>
       </div>
-        
     </>
 
   )

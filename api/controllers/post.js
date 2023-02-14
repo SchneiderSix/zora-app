@@ -143,3 +143,16 @@ export const  getFirstQuestions = (req, res) => {
   })
 }
 
+export const searchEngine = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
+
+  const text = req.params.text
+  const q = "SELECT * FROM posts WHERE posts.desc like ?"
+
+  db.query(q, ['%' + text + '%'], (err, data) => {
+    if (err) return res.status(500).json(err)
+    return res.status(200).json(data)
+  })
+
+}
