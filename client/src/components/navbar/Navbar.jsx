@@ -35,7 +35,8 @@ const Navbar = () => {
       .then(()=> window.location.reload(false))
       .catch(err=> console.log("User Not Found: " + err));
     }
-    return navi("/search/" + searchInput, {searchInput})
+    navi("/search/" + searchInput, {searchInput})
+    return window.location.reload(false)
   }
   
   const reRender = () => {
