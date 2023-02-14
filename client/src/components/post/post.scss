@@ -8,14 +8,7 @@
     border-radius: 20px;
     background-color: themed("bg");
     color: themed("textColor");
-    display: flex;
-    align-items: center;
-
-    div.sum_decisions{
-      margin: 0.7em;
-      height: 100%;
-      opacity: 0.7;
-    }
+    padding: 1em;
 
     .container {
       padding: 20px;
