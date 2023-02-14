@@ -77,7 +77,7 @@ app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
         console.log('File deleted')
       }
     });
-    res.status(200).json({'status': 'OK'});
+    res.status(200).json({'status': 'OK', 'imgLink': response.fileURL});
   }
 });
 
