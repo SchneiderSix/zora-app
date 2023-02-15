@@ -58,14 +58,25 @@ app.post("/mix", verifyToken, (req, res) => {
       if (algorithm === "cosine") {
         const words = req.body;
         let base = "";
-        const arr = [];
+        let arr = [];
+        let strReco = "";
+
         for (const [key, value] of Object.entries(words)) {
           if (key.startsWith("?")) {
             base = value;
+          } else if (key === "Recommended") {
+            strReco = value;
+            strReco = strReco.substring(1, strReco.length - 1);
           } else {
             arr.push(value);
           }
         }
+        Object.keys(words).forEach((item) => {
+          if (strReco.includes(item)) {
+            arr = arr.filter((ele) => ele !== words[item]);
+          }
+        });
+        console.log(arr);
         const result = cosine(base, arr);
         let ky = Object.keys(words).find((key) => words[key] === result);
         const recommendation = {};
