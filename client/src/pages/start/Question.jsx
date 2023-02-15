@@ -8,6 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Questiondesc from "./Questiondesc"
 import { AuthContext } from "../../context/authContext";
 import axios from 'axios';
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import BtnSbmtFQ from "./BtnSbmtFQ"
 
 const Question = ({counter}) => {
 
@@ -17,8 +19,9 @@ const Question = ({counter}) => {
       return res.data
     })
   )
+  const queryClient = useQueryClient();
 
-  const navigate = useNavigate()
+  
   return (
     <> 
       <div className="question">
@@ -29,12 +32,11 @@ const Question = ({counter}) => {
         }
       </div>
       <div className="nextbtn">
-      <button onClick={() =>navigate("/")}> Submit </button>
+      <BtnSbmtFQ/>
       </div>
     </>
 
   )
-  
   
 }
 
