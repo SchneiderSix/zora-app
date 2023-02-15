@@ -66,6 +66,7 @@ app.post("/mix", verifyToken, (req, res) => {
             arr.push(value);
           }
         }
+        console.log("Base: " + base + " Array: " + arr);
         const result = cosine(base, arr);
         let ky = Object.keys(words).find((key) => words[key] === result);
         const recommendation = {};
