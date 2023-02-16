@@ -21,6 +21,12 @@ const Post = ({ post }) => {
     /*console.log(matches["bestMatch"]["target"]);*/
     return (matches["bestMatch"]["target"]);
   };
+
+  const ai = (dict) => {
+    const res = makeRequest.post(`/users`, dict);
+    return res;
+  }
+
   var decision = null
   var chosen = null
   const [commentOpen, setCommentOpen] = useState(false);
@@ -84,7 +90,6 @@ const Post = ({ post }) => {
       /*Size === 0 error*/
       const sameArray = [];
       const descOb = {};
-      console.log(post.desc);
       /*Get users that liked the same post*/
       makeRequest.get(`likes/${currentUser.id}/${post.id}`).then((response) => {
         /*console.log(response.data);*/
@@ -107,14 +112,11 @@ const Post = ({ post }) => {
             /*Last iteration*/
             if ((i === sameArray.at(-1)) && (j  === Object.keys(res.data).length)) {
               /*console.log(descOb);*/
-              console.log("Cosine:");
               if (Object.keys(descOb).length) {
-                const cs = cosine(post.desc, Object.values(descOb));
-                if (cs) {
-                  console.log("PostId: " + Object.keys(descOb).find(key => descOb[key] === cs) + " PostDesc: " + cs);
-                  /*Put post id into recommendedPostIds*/
-                  try {makeRequest.put(`users/reco/post/${currentUser.id}/${Object.keys(descOb).find(key => descOb[key] === cs)}`)} catch (e) {};
-                };
+                //Original post
+                descOb["?"] = post.desc;
+                //Call AI API then save postId
+                makeRequest.post(`/users`, descOb).then((response) => {makeRequest.put(`/users/reco/post/${currentUser.id}/${Object.keys(response.data["recommendation"])[0]}`);});
               };
             };
           });

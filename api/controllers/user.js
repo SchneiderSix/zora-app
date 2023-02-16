@@ -1,5 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
+import qs from "qs";
+import axios from "axios";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -81,4 +83,30 @@ export const recommendPost = (req, res) => {
       console.log(err);
     }
   });
+};
+
+//Call AI API
+export const aiDice = async (req, res) => {
+  let dict = req.body;
+  const urlv = "http://localhost:4000/mix";
+
+  var data = qs.stringify(dict);
+  var config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: urlv,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
+      algorithm: "cosine",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: data,
+  };
+
+  try {
+    const response = await axios(config);
+    return res.status(200).send(response.data);
+  } catch (e) {
+    console.log(e);
+  }
 };
