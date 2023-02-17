@@ -11,7 +11,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
-import { useLocation } from "react-router-dom";
+import { Await, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
@@ -43,19 +43,26 @@ const Profile = () => {
     const data = await makeRequest.get("/users/five/" + id);
     return data;
   };
+
+  const prom = async (re1, re2, re3) =>{
+    const res1 = re1;
+    const res2 = re2;
+    const res3 = re3;
+    await Promise.all([res1, res2, res3]);
+  }
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     (following) => {
       if (following){
-        getLastFive(currentUser.id).then((res) => {
+        makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
           const network = {};
           const userFriends = [];
           for (let i of Object.values(res.data)) {
             userFriends.push(i.id);
           }
           //Don't add userId of current profile (unfollowed) for network 
-          //userFriends.push(userId);
+          userFriends.pop(userId);
           network["?"+currentUser.id] = userFriends;
           for (let i of network["?"+currentUser.id]) {
             if (!network[i])
@@ -66,8 +73,11 @@ const Profile = () => {
             }
             //Last iteration
             if (i === userFriends[userFriends.length - 1]) {
-              makeRequest.post(`/users/simple`, network).then((response) => {makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`);}).then(() => {
-                window.location.reload();
+              makeRequest.post(`/users/simple`, network).then((response) => {
+                prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
+                makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
+                window.location.reload()
+                );
               });
             }
           });
@@ -75,7 +85,7 @@ const Profile = () => {
         });
         return makeRequest.delete("/relationships?userId=" + userId);
       }
-      getLastFive(currentUser.id).then((res) => {
+      makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
         const network = {};
         const userFriends = [];
         for (let i of Object.values(res.data)) {
@@ -92,8 +102,11 @@ const Profile = () => {
           }
           //Last iteration
           if (i === userFriends[userFriends.length - 1]) {
-            makeRequest.post(`/users/simple`, network).then((response) => {makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`);}).then(() => {
-              window.location.reload();
+            makeRequest.post(`/users/simple`, network).then((response) => {
+              prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
+              makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
+              window.location.reload()
+              );
             });
           }
         });

@@ -86,18 +86,31 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "friend") {
-        const recommendation = {};
-        recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
-        res.json({ recommendation });
-      } else if (algorithm === "image") {
-        if (Object.values(req.body)[1]) {
+        try {
+          const recommendation = {};
+          recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
+          res.json({ recommendation });
+        } catch (err) {
           res.sendStatus(403);
-        } else {
-          downloadImage(Object.values(req.body)[0])
-            .then(() => classify("images/test.jpg"))
-            .then((val) => {
-              res.json(val);
-            });
+        }
+      } else if (algorithm === "image") {
+        try {
+          if (Object.values(req.body)[1]) {
+            res.sendStatus(403);
+          } else {
+            downloadImage(Object.values(req.body)[0])
+              .then(() => classify("images/test.jpg"))
+              .then((val) => {
+                res.json(val);
+              });
+          }
+        } catch (err) {
+          res.sendStatus(403);
+        }
+      } else if (algorithm === "complex") {
+        try {
+        } catch (err) {
+          res.sendStatus(403);
         }
       } else {
         res.sendStatus(403);
@@ -191,8 +204,10 @@ const simpleFriend = (data) => {
     block = nu["Blocked"];
     delete nu["Blocked"];
   }
-  delete nu[user];
+  delete nu["?" + user];
 
+  console.log(nu);
+  console.log(data["?" + user]);
   /*Object.keys(nu).forEach((key) => {
     nu[key] = nu[key].split("[").toString().split("]").toString().split('"');
   });*/
@@ -201,6 +216,10 @@ const simpleFriend = (data) => {
 
   for (let f in nu) {
     for (let f1 in nu[f]) {
+      console.log("User: " + f + " Friend: " + nu[f][f1]);
+      for (let i of data["?" + user]) {
+        if (i === nu[f][f1]) console.log("in original user friend");
+      }
       if (
         !checkList(data["?" + user], nu[f][f1]) &&
         nu[f][f1] !== user &&
@@ -219,14 +238,16 @@ const simpleFriend = (data) => {
       }
     }
   }
+  for (let i of data["?" + user]) {
+    if (recommendedUser.includes(i)) recommendedUser.pop(i);
+  }
+  console.log("Reco: " + recommendedUser);
   return recommendedUser;
 };
 
 //Auxiliar function for simple friend block list
 const checkList = (mylist, name) => {
-  const arr =
-    mylist; /*.split("[").toString().split("]").toString().split('"')*/
-  for (const i of arr) {
+  for (let i of mylist) {
     if (i === name) {
       return true;
     }

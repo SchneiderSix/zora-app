@@ -54,7 +54,7 @@ export const getLastFiveUserFriends = (req, res) => {
 //Get recommended friends
 export const getRecommendedFriends = (req, res) => {
   const userId = req.params.userId;
-  const q = `SELECT users.id, name, profilePic FROM users WHERE REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%') ORDER BY users.id DESC`;
+  const q = `select users.id, users.name, users.profilePic from users where REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%') and users.id not in (SELECT users.id from users left join relationships as r on (users.id=r.followedUserId) WHERE r.followerUserId=${userId})`;
   db.query(q, [userId], (err, data) => {
     if (err) return res.status(500).json(err);
     const { password, ...info } = data;
@@ -120,7 +120,7 @@ export const recommendedFriend = (req, res) => {
       const { password, ...info } = data;
       return res.json(info);
     } catch (err) {
-      console.log(err);
+      //console.log(err);
     }
   });
 };
