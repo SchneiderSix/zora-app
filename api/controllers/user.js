@@ -176,3 +176,29 @@ export const aiSimpleFriend = async (req, res) => {
     console.log(e);
   }
 };
+
+//Call AI API for img classification
+export const aiClass = async (req, res) => {
+  let dict = req.body;
+  const urlv = "http://localhost:4000/mix";
+
+  var data = qs.stringify(dict);
+  var config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: urlv,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
+      algorithm: "image",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: data,
+  };
+
+  try {
+    const response = await axios(config);
+    return res.status(200).send(response.data);
+  } catch (e) {
+    console.log(e);
+  }
+};

@@ -53,11 +53,19 @@ const Share = () => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
-    /*Check if imgUrl is empty and it doesn't creates empty post*/
-    if (desc==="") return;
-    mutation.mutate({ desc, img: imgUrl });
-    setDesc("");
-    setFile(null);
+    /*Check if imgUrl exists and desc no for tensorflow class*/
+    if (desc==="" && imgUrl) {
+      const dict = {};
+      dict["1"] = imgUrl;
+      //Like this
+      makeRequest.post("users/image", dict).then((response) => {mutation.mutate({ desc: `${response}`, img: imgUrl });});
+    } else if (desc==="") {
+      return;
+    } else {
+      mutation.mutate({ desc, img: imgUrl });
+      setDesc("");
+      setFile(null);
+    }
   };
 
   return (
