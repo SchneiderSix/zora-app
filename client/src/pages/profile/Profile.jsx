@@ -44,11 +44,10 @@ const Profile = () => {
     return data;
   };
 
-  const prom = async (re1, re2, re3) =>{
+  const prom = async (re1, re2) =>{
     const res1 = re1;
     const res2 = re2;
-    const res3 = re3;
-    await Promise.all([res1, res2, res3]);
+    await Promise.all([res1, res2]);
   }
   const queryClient = useQueryClient();
 
@@ -75,7 +74,6 @@ const Profile = () => {
             if (i === userFriends[userFriends.length - 1]) {
               makeRequest.post(`/users/simple`, network).then((response) => {
                 prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
-                makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
                 window.location.reload()
                 );
               });
