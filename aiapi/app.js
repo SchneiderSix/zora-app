@@ -179,7 +179,12 @@ const cosine = (txt, arr) => {
 
 //Simple friend
 const simpleFriend = (data) => {
-  const user = Object.keys(data)[0];
+  let user = "";
+  for (let i of Object.keys(data)) {
+    if (i.startsWith("?")) user = i;
+  }
+  user = user.substring(1);
+
   const nu = { ...data };
   let block = "";
   if (nu["Blocked"]) {
@@ -188,16 +193,16 @@ const simpleFriend = (data) => {
   }
   delete nu[user];
 
-  Object.keys(nu).forEach((key) => {
+  /*Object.keys(nu).forEach((key) => {
     nu[key] = nu[key].split("[").toString().split("]").toString().split('"');
-  });
+  });*/
 
   let recommendedUser = [];
 
   for (let f in nu) {
     for (let f1 in nu[f]) {
       if (
-        !checkList(data[user], nu[f][f1]) &&
+        !checkList(data["?" + user], nu[f][f1]) &&
         nu[f][f1] !== user &&
         !checkList(block, nu[f][f1])
       ) {
@@ -219,7 +224,8 @@ const simpleFriend = (data) => {
 
 //Auxiliar function for simple friend block list
 const checkList = (mylist, name) => {
-  const arr = mylist.split("[").toString().split("]").toString().split('"');
+  const arr =
+    mylist; /*.split("[").toString().split("]").toString().split('"')*/
   for (const i of arr) {
     if (i === name) {
       return true;

@@ -39,6 +39,29 @@ export const getUserFriends = (req, res) => {
   });
 };
 
+//Get last five friends from specific user
+export const getLastFiveUserFriends = (req, res) => {
+  const userId = req.params.userId;
+  const q = `SELECT users.id, name FROM users LEFT JOIN relationships AS r ON (users.id = r.followedUserId) WHERE r.followerUserId=? ORDER BY users.id DESC LIMIT 5`;
+
+  db.query(q, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...info } = data;
+    return res.json(info);
+  });
+};
+
+//Get recommended friends
+export const getRecommendedFriends = (req, res) => {
+  const userId = req.params.userId;
+  const q = `SELECT users.id, name, profilePic FROM users WHERE REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%') ORDER BY users.id DESC`;
+  db.query(q, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...info } = data;
+    return res.json(info);
+  });
+};
+
 export const updateUser = (req, res) => {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not authenticated!");
@@ -85,7 +108,24 @@ export const recommendPost = (req, res) => {
   });
 };
 
-//Call AI API
+/*Insert recommendedFriendIds into "recommendedFriendIds"*/
+export const recommendedFriend = (req, res) => {
+  const userId = req.params.userId;
+  const friendId = req.params.friendId;
+  /*Add recommendedPostId as string (because JSON_SEARCH can search strings not ints and that function is needed to delete specific id from list with many ids) or delete it from array*/
+  const q = `UPDATE users SET recommendedFriendIds = CASE WHEN JSON_CONTAINS((select recommendedFriendIds FROM (SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}) AS reco), '["${friendId}"]') = 0 THEN JSON_ARRAY_APPEND(recommendedFriendIds, '$', "${friendId}") WHEN JSON_LENGTH(recommendedFriendIds) = 1 THEN JSON_REMOVE(recommendedFriendIds, '$[0]') ELSE JSON_REMOVE(recommendedFriendIds, REPLACE(JSON_SEARCH(recommendedFriendIds, "one", ${friendId}), '"', '')) END WHERE users.id = ${userId}`;
+
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};
+
+//Call AI API for cosine
 export const aiDice = async (req, res) => {
   let dict = req.body;
   const urlv = "http://localhost:4000/mix";
@@ -98,6 +138,32 @@ export const aiDice = async (req, res) => {
     headers: {
       Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
       algorithm: "cosine",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: data,
+  };
+
+  try {
+    const response = await axios(config);
+    return res.status(200).send(response.data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//Call AI API for simpleFriend
+export const aiSimpleFriend = async (req, res) => {
+  let dict = req.body;
+  const urlv = "http://localhost:4000/mix";
+
+  var data = qs.stringify(dict);
+  var config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: urlv,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
+      algorithm: "friend",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     data: data,

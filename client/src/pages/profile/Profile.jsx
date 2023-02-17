@@ -39,12 +39,66 @@ const Profile = () => {
       })
   );
 
+  const getLastFive = async (id) => {
+    const data = await makeRequest.get("/users/five/" + id);
+    return data;
+  };
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     (following) => {
-      if (following)
+      if (following){
+        getLastFive(currentUser.id).then((res) => {
+          const network = {};
+          const userFriends = [];
+          for (let i of Object.values(res.data)) {
+            userFriends.push(i.id);
+          }
+          //Don't add userId of current profile (unfollowed) for network 
+          //userFriends.push(userId);
+          network["?"+currentUser.id] = userFriends;
+          for (let i of network["?"+currentUser.id]) {
+            if (!network[i])
+              network[i] = [];
+            getLastFive(i).then((user) =>{
+            for (let j of Object.values(user.data)){
+              network[i].push(j.id);
+            }
+            //Last iteration
+            if (i === userFriends[userFriends.length - 1]) {
+              makeRequest.post(`/users/simple`, network).then((response) => {makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`);}).then(() => {
+                window.location.reload();
+              });
+            }
+          });
+          }
+        });
         return makeRequest.delete("/relationships?userId=" + userId);
+      }
+      getLastFive(currentUser.id).then((res) => {
+        const network = {};
+        const userFriends = [];
+        for (let i of Object.values(res.data)) {
+          userFriends.push(i.id);
+        }
+        userFriends.push(userId);
+        network["?"+currentUser.id] = userFriends;
+        for (let i of network["?"+currentUser.id]) {
+          if (!network[i])
+            network[i] = [];
+          getLastFive(i).then((user) =>{
+          for (let j of Object.values(user.data)){
+            network[i].push(j.id);
+          }
+          //Last iteration
+          if (i === userFriends[userFriends.length - 1]) {
+            makeRequest.post(`/users/simple`, network).then((response) => {makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`);}).then(() => {
+              window.location.reload();
+            });
+          }
+        });
+        }
+      });
       return makeRequest.post("/relationships", { userId });
     },
     {
@@ -57,7 +111,7 @@ const Profile = () => {
 
   const handleFollow = () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
-    window.location.reload(false);
+    //window.location.reload();
   };
 
   return (
