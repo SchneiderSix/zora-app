@@ -1,7 +1,5 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
-import qs from "qs";
-import axios from "axios";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -107,6 +105,9 @@ export const recommendPost = (req, res) => {
     }
   });
 };
+<<<<<<< HEAD
+=======
+
 
 /*Insert recommendedFriendIds into "recommendedFriendIds"*/
 export const recommendedFriend = (req, res) => {
@@ -175,4 +176,4 @@ export const aiSimpleFriend = async (req, res) => {
   } catch (e) {
     console.log(e);
   }
-};
+>>>>>>> 7246a6221abb4dcfcbf7797a24fa8162379db7d6

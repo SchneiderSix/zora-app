@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "googleapis": "^111.0.0"
     "@tensorflow/tfjs-node": "^4.2.0"
+
   }
 }

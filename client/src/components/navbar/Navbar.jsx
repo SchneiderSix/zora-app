@@ -68,8 +68,8 @@ const Navbar = () => {
         <NotificationsOutlinedIcon />
         <div className="user">
           <img
-            src={"/upload/" + currentUser.profilePic + '?' + new Date()}
-            alt={"" + currentUser.profilePic}
+            src={currentUser.profilePic}
+            alt={currentUser.profilePic}
           />
           <span>{currentUser.name}</span>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>

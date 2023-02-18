@@ -134,7 +134,7 @@ const Post = ({ post }) => {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={"/upload/"+post.profilePic} alt="" />
+            <img src={post.profilePic} alt="" />
             <div className="details">
               <Link
                 to={`/profile/${post.userId}`}
@@ -152,7 +152,10 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img className={isActive ? "deactived" : "active"} src={"/upload/" + post.img} alt=""  onClick={handleClickImg}/>
+          
+          <div className={post.img ? "postImage": "nonImage"}>
+          <img className={isActive ? "deactived" : "active"} src={post.img} alt=""  onClick={handleClickImg}/>
+          </div>
         </div>
         <div className="info">
           <div className="item">

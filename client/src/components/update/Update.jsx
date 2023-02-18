@@ -18,8 +18,8 @@ const Update = ({ setOpenUpdate, user }) => {
   const { darkMode } = useContext(DarkModeContext)
   ;
 
-  const upload = async (file) => {
-    console.log(file)
+  const upload = async (file, typeFile) => {
+    // console.log(file)
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -34,8 +34,11 @@ const Update = ({ setOpenUpdate, user }) => {
         setProfile(null);
         return;
       } else {
-        const res = await makeRequest.post("/upload", formData);
-        return res.data;
+        const response = await makeRequest.post(`/updateProfile/${user.id}`, formData, {params: {
+          'fileType': typeFile === 'cover' ? 'pfp' : 'cover'
+        }});
+        console.log(response.data);
+        return response.data.imgURL;
       };
     } catch (err) {
       console.log(err);
@@ -47,7 +50,7 @@ const Update = ({ setOpenUpdate, user }) => {
   };
 
   const queryClient = useQueryClient();
-
+  console.log(user.id);
   const mutation = useMutation(
     (user) => {
       return makeRequest.put("/users", user);
@@ -67,8 +70,8 @@ const Update = ({ setOpenUpdate, user }) => {
     
     let coverUrl;
     let profileUrl;
-    coverUrl = cover ? await upload(cover) : user.profilePic;
-    profileUrl = profile ? await upload(profile) : user.coverPic;
+    coverUrl = cover ? await upload(cover, 'cover') : user.profilePic;
+    profileUrl = profile ? await upload(profile, 'pfp') : user.coverPic;
     if (!coverUrl || !profileUrl) return;
     
     mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
@@ -89,7 +92,7 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     cover
                       ? URL.createObjectURL(cover)
-                      : "/upload/" + user.profilePic
+                      : user.profilePic
                   }
                   alt=""
                 />
@@ -109,7 +112,7 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     profile
                       ? URL.createObjectURL(profile)
-                      : "/upload/" + user.coverPic
+                      : user.coverPic
                   }
                   alt=""
                 />
