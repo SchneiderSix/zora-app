@@ -13,6 +13,7 @@ import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import Start from "./pages/start/Start";
 import Search from "./pages/search/Search";
+import Stats from "./pages/stats/Stats";
 import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
@@ -65,8 +66,22 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/profile/:id",
-          element: <Profile />,
+          path: "/profile/",
+          children: [
+            {
+              path: "",
+              element: <Navigate to="/"/>
+            },
+            {
+              path: ":id",
+              element: <Profile />,
+            },
+            {
+              path: ":id/stats",
+              element: <Stats />
+            }
+
+          ]
         },
         {
           path: "/search/:text",
