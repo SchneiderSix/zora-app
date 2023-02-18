@@ -1,0 +1,58 @@
+.start {
+  height: 100vh;
+  width: 100%;
+  background: #333;
+  color: #EEE;
+
+  display: grid;
+  place-items: center;
+
+  .questionCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 700px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .question{
+      width: 80%;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      
+      .post {
+        background-color: #222;
+        border-radius: 20px;
+        padding: 1em 2em;
+ 
+        .content {
+          margin: 20px 0px;
+          max-width: 1000px;
+        }
+
+        .info{
+          display:inline-flex;
+          gap: 50px;
+        }
+      }
+    }
+    .nextbtn{
+      display: flex;
+      justify-content: flex-end;
+      width: 80%;
+      button {
+        border-radius: 5px;
+        padding: 0.4em;
+        font-size: 20px;
+        background: #5271ff;
+        border: 0;
+        color: #fff;
+      }
+    }
+  }
+
+}

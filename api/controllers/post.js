@@ -117,7 +117,7 @@ export const deletePost = (req, res) => {
 /*Get current feed, help cosine to don't recommend post from current feed*/
 export const getFeedFromUser = (req, res) => {
   const userId = req.params.userId;
-  const q = `SELECT posts.id, posts.desc FROM posts LEFT JOIN relationships AS r ON (posts.userid=r.followedUserId) WHERE r.followerUserId=${userId} OR posts.userid=${userId} ORDER BY posts.createdAt DESC`;
+  const q = `SELECT posts.id FROM posts LEFT JOIN relationships AS r ON (posts.userid=r.followedUserId) WHERE r.followerUserId=${userId} OR posts.userid=${userId} ORDER BY posts.createdAt DESC`;
   db.query(q, (err, data) => {
     try {
       const { password, ...info } = data;
@@ -133,3 +133,25 @@ function getRandomId(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export const getFirstQuestions = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
+  db.query("SELECT * FROM posts WHERE userid=0;", (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};
+
+export const searchEngine = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
+
+  const text = req.params.text;
+  const q = "SELECT * FROM posts WHERE posts.desc like ?";
+
+  db.query(q, ["%" + text + "%"], (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.status(200).json(data);
+  });
+};

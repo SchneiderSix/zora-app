@@ -1,6 +1,11 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 
+export const check = (req, res) => {
+  const id = req.params.id
+  console.log(id)
+  return res(200).json(true)
+}
 export const getLikes = (req, res) => {
   const q = "SELECT userId, yes_no FROM likes WHERE postId = ?";
 
