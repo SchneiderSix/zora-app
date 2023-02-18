@@ -17,7 +17,7 @@ import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
 import { fontSize } from "@mui/system";
-
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -125,6 +125,8 @@ const Profile = () => {
     //window.location.reload();
   };
 
+  const navigate = useNavigate()
+
   return (
     <div className="profile">
       {isLoading ? (
@@ -154,9 +156,13 @@ const Profile = () => {
                 </div>
                 {rIsLoading ? (
                   "loading"
-                ) : userId === currentUser.id ? (
+                ) : userId === currentUser.id ?
+                <>
                   <button onClick={() => setOpenUpdate(true)}>update</button>
-                ) : (
+                  <button onClick={() => navigate(`/profile/${currentUser.id}/stats`)}>stats</button>
+                </>
+                  
+                : (
                   <button onClick={handleFollow}>
                     {relationshipData.includes(currentUser.id)
                       ? "Following"
