@@ -73,6 +73,7 @@ export async function updatePfp(fileId, filePath, delFile, fileType) {
         version: 'v3',
         auth: oauth2Client,
     });
+    console.log('-------------------FILE ID----------------: ', fileId);
     if (delFile)
     {
         const response = await drive.files.delete({

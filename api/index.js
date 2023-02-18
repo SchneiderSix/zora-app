@@ -73,6 +73,7 @@ app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
 
 
 async function uploadPfp(driveData, fileName, deleteFile, fileType) {
+  console.log('DRIVEDATA ---------------------- ', driveData);
   const response = await updatePfp(driveData, fileName, deleteFile, fileType);
   if (response.status === 'FAILED') return ({'status': 'FAILED'});
   return ({'status': 'OK', 'imgUrl': response.fileURL})
@@ -83,8 +84,6 @@ app.post('/api/updateProfile/:userId', upload.single('file'), async(req, res) =>
   const file = req.file;
   const userID = req.params.userId;
   const fileType = req.query.fileType;
-  let defaultPfp = '1K9q6MdmJwRB5SCZDbWuWJwaaU1Tq7y70';
-  let defaultBanner = '1cQxbAQhRTxYT4vzBzE2T84eOk-fIAQep';
   let profData;
   let folderId;
   let driveData;
@@ -105,6 +104,7 @@ app.post('/api/updateProfile/:userId', upload.single('file'), async(req, res) =>
       driveData = JSON.stringify(data[0].profilePic);
       let test = driveData.split('=');
       fileId = test[2].substring(0, test[2].length-1);
+      console.log('MY FILE ID --------------------: ', fileId);
       if (fileId === '1K9q6MdmJwRB5SCZDbWuWJwaaU1Tq7y70') {
         deleteFile = false;
       } else {
@@ -115,6 +115,12 @@ app.post('/api/updateProfile/:userId', upload.single('file'), async(req, res) =>
       driveData = JSON.stringify(data[0].coverPic);
       let test = driveData.split('=');
       fileId = test[2].substring(0, test[2].length-1);
+      console.log('MY FILE ID: ........-.-.-.-.--.-', fileId);
+      if (fileId === '1cQxbAQhRTxYT4vzBzE2T84eOk-fIAQep') {
+        deleteFile = false;
+      } else {
+        deleteFile = true;
+      }
     }
     function deleteLocalfile() {
       fs.unlink(`../client/public/upload/${file.filename}`, function (error) {
@@ -128,7 +134,7 @@ app.post('/api/updateProfile/:userId', upload.single('file'), async(req, res) =>
       });
     };
     console.log(`File ID: ${fileId}\nFolder ID: ${folderId}\nDelete file?: ${deleteFile}\nFile type: ${fileType}`);
-    uploadPfp(driveData, file.filename, deleteFile, file.mimetype).then(response => {
+    uploadPfp(fileId, file.filename, deleteFile, file.mimetype).then(response => {
       console.log(response);
       if (!deleteLocalfile) res.status(500).json({'status': 'DELETE FAILED'});
       if (response.status === 'FAILED') res.status(500).json({'status': 'FAILED'});
