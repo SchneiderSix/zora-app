@@ -22,6 +22,7 @@
     "jsonwebtoken": "^9.0.0",
     "langcheck": "^2.3.2",
     "natural": "^6.2.0",
-    "string-similarity": "^4.0.4"
+    "string-similarity": "^4.0.4",
+    "wink-nlp-utils": "^2.1.0"
   }
 }

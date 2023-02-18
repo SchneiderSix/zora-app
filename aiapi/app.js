@@ -206,8 +206,8 @@ const simpleFriend = (data) => {
   }
   delete nu["?" + user];
 
-  console.log(nu);
-  console.log(data["?" + user]);
+  //console.log(nu);
+  //console.log(data["?" + user]);
   /*Object.keys(nu).forEach((key) => {
     nu[key] = nu[key].split("[").toString().split("]").toString().split('"');
   });*/
@@ -216,7 +216,7 @@ const simpleFriend = (data) => {
 
   for (let f in nu) {
     for (let f1 in nu[f]) {
-      console.log("User: " + f + " Friend: " + nu[f][f1]);
+      //console.log("User: " + f + " Friend: " + nu[f][f1]);
       for (let i of data["?" + user]) {
         if (i === nu[f][f1]) console.log("in original user friend");
       }
@@ -241,7 +241,7 @@ const simpleFriend = (data) => {
   for (let i of data["?" + user]) {
     if (recommendedUser.includes(i)) recommendedUser.pop(i);
   }
-  console.log("Reco: " + recommendedUser);
+  //console.log("Reco: " + recommendedUser);
   return recommendedUser;
 };
 

@@ -12,20 +12,10 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
-import * as stringSimilarity from "string-similarity";
+
 
 
 const Post = ({ post }) => {
-  const cosine = (txt, arr) => {
-    const matches = stringSimilarity.findBestMatch(txt, arr);
-    /*console.log(matches["bestMatch"]["target"]);*/
-    return (matches["bestMatch"]["target"]);
-  };
-
-  const ai = (dict) => {
-    const res = makeRequest.post(`/users`, dict);
-    return res;
-  }
 
   var decision = null
   var chosen = null
