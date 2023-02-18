@@ -10,7 +10,7 @@ import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
 import uploadAuth from '../gcs/index.js';
-import generatePublicUrl from '../gcs/index.js';
+// import generatePublicUrl from '../gcs/index.js';
 import { updatePfp } from "../gcs/index.js";
 import fs from 'fs';
 import { db } from "./connect.js";
