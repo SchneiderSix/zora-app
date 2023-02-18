@@ -5,7 +5,6 @@ import {
   getUserName,
   getUserFriends,
   recommendPost,
-  uploadImage,
 } from "../controllers/user.js";
 
 const router = express.Router();

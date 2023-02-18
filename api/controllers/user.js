@@ -1,10 +1,5 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
-import multer from 'multer';
-import path from 'path';
-import createReadStream from "fs";
-import uploadAuth from "../../gcs/index.js";
-import mime from 'mime';
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -86,7 +81,4 @@ export const recommendPost = (req, res) => {
       console.log(err);
     }
   });
-};
-
-export const uploadImage = (req, res) => {
 };
