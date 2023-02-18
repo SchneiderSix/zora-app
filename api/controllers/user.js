@@ -105,9 +105,6 @@ export const recommendPost = (req, res) => {
     }
   });
 };
-<<<<<<< HEAD
-=======
-
 
 /*Insert recommendedFriendIds into "recommendedFriendIds"*/
 export const recommendedFriend = (req, res) => {
@@ -176,4 +173,4 @@ export const aiSimpleFriend = async (req, res) => {
   } catch (e) {
     console.log(e);
   }
->>>>>>> 7246a6221abb4dcfcbf7797a24fa8162379db7d6
+};

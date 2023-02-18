@@ -5,14 +5,11 @@ import {
   getUserName,
   getUserFriends,
   recommendPost,
-<<<<<<< HEAD
-=======
   recommendedFriend,
   getLastFiveUserFriends,
   aiDice,
   aiSimpleFriend,
   getRecommendedFriends,
->>>>>>> 7246a6221abb4dcfcbf7797a24fa8162379db7d6
 } from "../controllers/user.js";
 
 const router = express.Router();
