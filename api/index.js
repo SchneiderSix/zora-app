@@ -11,6 +11,7 @@ import multer from "multer";
 import cookieParser from "cookie-parser";
 import uploadAuth from '../gcs/index.js';
 import generatePublicUrl from '../gcs/index.js';
+import { updatePfp } from "../gcs/index.js";
 import fs from 'fs';
 import { db } from "./connect.js";
 
@@ -70,18 +71,70 @@ app.post('/api/uploadImage', upload.single("file"), async(req, res) => {
   }
 });
 
-app.post('/api/updateProfile', upload.single('file'), async(req, res) => {
+
+async function uploadPfp(driveData, fileName, deleteFile, fileType) {
+  const response = await updatePfp(driveData, fileName, deleteFile, fileType);
+  if (response.status === 'FAILED') return ({'status': 'FAILED'});
+  return ({'status': 'OK', 'imgUrl': response.fileURL})
+
+}
+
+app.post('/api/updateProfile/:userId', upload.single('file'), async(req, res) => {
   const file = req.file;
   const userID = req.params.userId;
-  console.log('In the route!')
-  const q = "SELECT `profilePic` FROM `users` WHERE id = ?"
+  const fileType = req.query.fileType;
+  let defaultPfp = '1K9q6MdmJwRB5SCZDbWuWJwaaU1Tq7y70';
+  let defaultBanner = '1cQxbAQhRTxYT4vzBzE2T84eOk-fIAQep';
+  let profData;
+  let folderId;
+  let driveData;
+  let fileId;
+  let q;
+  if (fileType === 'pfp')
+  {
+    q  = "SELECT `profilePic` FROM `users` WHERE `id` = ?";
+  } else {
+    q = "SELECT `coverPic` FROM `users` WHERE `id` = ?";
+  }
   db.query(q, [userID], (err, data) => {
     if (err) return res.status(500).json(err);
-    // if (data.length) console.log(data);
-    console.log('Entered query!');
-    res.status(200).json({ 'status': 'OK' });
-  })
-  // console.log('File received');
+    let deleteFile;
+    profData = data;
+    if (fileType === 'pfp')
+    {
+      driveData = JSON.stringify(data[0].profilePic);
+      let test = driveData.split('=');
+      fileId = test[2].substring(0, test[2].length-1);
+      if (fileId === '1K9q6MdmJwRB5SCZDbWuWJwaaU1Tq7y70') {
+        deleteFile = false;
+      } else {
+        deleteFile = true;
+      }
+      
+    } else {
+      driveData = JSON.stringify(data[0].coverPic);
+      let test = driveData.split('=');
+      fileId = test[2].substring(0, test[2].length-1);
+    }
+    function deleteLocalfile() {
+      fs.unlink(`../client/public/upload/${file.filename}`, function (error) {
+        if (error) 
+        {
+          console.log(error);
+          return false;
+        }
+        console.log('delete succesful')
+        return true
+      });
+    };
+    console.log(`File ID: ${fileId}\nFolder ID: ${folderId}\nDelete file?: ${deleteFile}\nFile type: ${fileType}`);
+    uploadPfp(driveData, file.filename, deleteFile, file.mimetype).then(response => {
+      console.log(response);
+      if (!deleteLocalfile) res.status(500).json({'status': 'DELETE FAILED'});
+      if (response.status === 'FAILED') res.status(500).json({'status': 'FAILED'});
+      res.status(200).json({'status': 'OK', 'imgURL': response.imgUrl});
+    });
+});
 })
 
 app.use("/api/auth", authRoutes);

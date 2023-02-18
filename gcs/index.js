@@ -53,7 +53,7 @@ async function generatePublicUrl(fileId) {
     }
 }
 
-async function updatePfp(fileId) {
+export async function updatePfp(fileId, filePath, delFile, fileType) {
     const CLIENT_ID = "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
     const CLIENT_SECRET = "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";
     const REDIRECT_URI = "https://developers.google.com/oauthplayground";
@@ -73,12 +73,33 @@ async function updatePfp(fileId) {
         version: 'v3',
         auth: oauth2Client,
     });
-    try {
+    if (delFile)
+    {
         const response = await drive.files.delete({
-            'fileId': fileId
+            'fileId': fileId,
         });
+    }
+    try {
+        const buffer = fs.createReadStream(`../client/public/upload/${filePath}`);
+        const myResponse = await drive.files.create({
+            requestBody: {
+                name: filePath,
+                mimeType: fileType,
+                //parents: pFolder,
+            },
+            media: {
+                mimeType: fileType,
+                body: buffer,
+            },
+        });
+        const urlResp = await generatePublicUrl(myResponse.data.id);
+        if (urlResp.status === 'FAILED') {
+            return ({'status': 'FAILED'});
+        }
+        return {'status': 'OK', 'fileURL': urlResp.viewLink, 'ext': mime.getExtension(file)}
     } catch(error) {
-        throw(error);
+        console.log(error);
+        return {'status': 'FAILED', 'fileId': null, 'ext': null, 'error': error};
     }
 
 }
