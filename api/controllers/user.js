@@ -1,5 +1,6 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
+import qs from "qs";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
