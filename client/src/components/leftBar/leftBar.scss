@@ -41,8 +41,12 @@
           align-items: center;
           justify-content: space-between;
           margin: 20px 0px;
+
+            #logged-user{
+              cursor: default;
+            }
   
-            .user-info, .userInfo {
+            .user-info{
               display: flex;
               align-items: center;
               gap: 20px;
@@ -76,6 +80,10 @@
                 font-weight: 500;
                 color: themed("textColor");
               }
+            }
+
+            .user-info:hover{
+              cursor: pointer;
             }
   
             .buttons {
