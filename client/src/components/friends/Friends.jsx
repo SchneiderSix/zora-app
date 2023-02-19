@@ -11,12 +11,14 @@ import { useNavigate } from 'react-router-dom';
 
     return (
       <div className="user">
-        <div className="userInfo">
+        <div className="user-info">
+          <div>
           <img
-            src={"/upload/" + friend.profilePic}
+            src={friend.profilePic}
             alt=""
           />
-          <div className="online" />
+          </div>
+          <div className='online'></div>
           <span onClick={() => handleFriendProfile(friend)}>{friend.name}</span>
         </div>
       </div>

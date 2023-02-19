@@ -61,21 +61,17 @@ const Navbar = () => {
         <button onClick={ () => searchItems()}><SearchOutlinedIcon style={darkMode ? ({ color: "rgb(110, 199, 157)" }) : ({ color: "black" })}/></button>
       </div>
       <div className="right">
-      <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
-          <PersonOutlinedIcon />
-        </Link>
 
         <NotificationsOutlinedIcon />
-        <div className="user">
+        <div className="user" onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
           <img
             src={currentUser.profilePic}
             alt={currentUser.profilePic}
           />
-          <span>{currentUser.name}</span>
+        </div>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
           <span>Logout</span>
         </Link>
-        </div>
       </div>
     </div>
   );
