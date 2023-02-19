@@ -58,7 +58,7 @@ const Navbar = () => {
       </div>
       <div className="search">
         <input type="text" placeholder="Search users or posts..." onChange={(e) => setSearchInput(e.target.value)}></input>
-        <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
+        <button onClick={ () => searchItems()}><SearchOutlinedIcon style={darkMode ? ({ color: "rgb(110, 199, 157)" }) : ({ color: "black" })}/></button>
       </div>
       <div className="right">
       <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
