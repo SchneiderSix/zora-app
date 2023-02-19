@@ -3,6 +3,7 @@ import langcheck from "langcheck";
 import natural from "natural";
 import nlp from "wink-nlp-utils";
 import nlpc from "compromise/three";
+import SpellChecker from "spellchecker";
 
 import BadWordsNext from "bad-words-next";
 import en from "bad-words-next/data/en.json" assert { type: "json" };
@@ -124,35 +125,52 @@ const prom = async (re1, re2) => {
 };
 
 const complex = async (data) => {
+  const remv = (str) => {
+    let res = "";
+    for (let i of str.split(" ")) {
+      if (!res.includes(i)) res += i + ", ";
+    }
+    return res.substring(0, res.length - 2);
+  };
   const Analyzer = natural.SentimentAnalyzer;
   const steemer = natural.PorterStemmer;
-  const analyzer = new Analyzer("English", steemer, "afinn");
 
   const myDict = {};
   for (const [key, value] of Object.entries(data)) {
     if (key !== undefined && value !== undefined) {
+      // Languague
+      let lan = JSON.stringify(await langcheck(value));
+      lan = lan.substring(10, 12);
       //Sentiment
+      if (lan === "en") {
+        var analyzer = new Analyzer("English", steemer, "afinn");
+      }
       let st = natural.PorterStemmer.tokenizeAndStem(value, true);
       //Who
       let doc = nlpc(natural.PorterStemmer.stem(value));
       let docStr = doc.people().normalize().text();
+      docStr = remv(docStr);
 
       //Bad words
-      let badwords = new BadWordsNext({ data: en });
+      if (lan === "en") {
+        var badwords = new BadWordsNext({ data: en });
+      }
       let bv = badwords.filter(value);
       let counter = 0;
-      for (let i of nlpc(bv).json()) {
-        console.log(i);
+      for (let i of bv.split(" ")) {
         if (i === "***") counter++;
       }
 
+      //Check spelling
+      let spl = SpellChecker.getCorrectionsForMisspelling(value);
+
       myDict[key] = {
-        language: JSON.stringify(await langcheck(value)),
+        language: lan,
         root_words: natural.PorterStemmer.tokenizeAndStem(value).slice(0, 10),
         insults: counter,
-        spell_check: "val",
+        spell_check: spl,
         sentiment: analyzer.getSentiment(st),
-        about_who: docStr, //nlp.string.extractPersonsName("hope seem dead Sarah conor"),
+        about_who: docStr,
       };
     }
   }
