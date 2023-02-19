@@ -11,12 +11,12 @@ import {
 
 const router = express.Router();
 
+router.get("/check-first-questions/:id", check);
 router.get("/", getLikes);
 router.get("/:usrId/:postId", samePostLike);
 router.get("/no/:usId/:posId", samePostDisLike);
 router.get("/related/:usId/:posId", getSamePostLike);
 router.post("/", addLike);
 router.delete("/", deleteLike);
-router.get("/check-first-questions/:id", check);
 
 export default router;
