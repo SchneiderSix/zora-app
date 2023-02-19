@@ -2,6 +2,7 @@ import { arrayMoveImmutable } from "array-move";
 import langcheck from "langcheck";
 import natural from "natural";
 import nlp from "wink-nlp-utils";
+import nlpc from "compromise/three";
 
 const data = {
   Bob: '{"Alice": {"60": "hermosamente bello"}, "Eve": {"8": "la verdad"}, "Charlie": {"24": "tan arrogante"}}',
@@ -28,7 +29,7 @@ const realData = {
   303: "Done your Phyrexian language homework? Then you might be interested in the latest Magic: The Gathering keycap set by Clackeys, which covers your keyboard in the metallic monsters' spidery script. The company's selling this set of 116 keycaps, made to tie in with the MTG set Phyrexia All Will Be One, for $125, and expects to deliver them in Q3 2023.  Fortunately, since the Phyrexian alphabet is not super easy to get to grips with (and you'd probably be better off learning a real language anyhow) the regular Latin letters appear alongside the Phyrexian characters.",
   310: 'Principal concept artist Jehan Choo has shared a slew of Magic: The Gathering art on their personal Instagram, featuring compleated Planeswalkers like Ajani as well Norn-controlled Praetors such as Jin-Gitaxias.  The latter came with an interesting tidbit about their design, finally answering the question, "Why did Jin-Gitaxias wear pants?" Choo answered, "We wanted to hide some sign that Norn was commanding all the Praetors, but I felt it was a bit too early to be super obvious with Jin, so he\'s actually hiding his Nornish augment under those swaggy pants.',
   403: "In Magic: The Gathering Arena, sometimes you just want to hit other players hard and fast. No major strategy is involved, just constant, aggressive assaults upon your opponent's life points. While Mono-White Soldiers is fun, Azorius Soldiers (Blue/White) offers far more potential options in gameplay.Unfortunately, Azorius Soldiers didn't really change much from The Brothers War to Phyrexia: All Will Be One. Only one creature was added to most decks in this archetype, and even that one's a little on the contested side: Skrelv, Defector Mite.",
-  666: "If you've been following the progression of Magic: The Gatherings card sets and storyline over the last few months, you know that the latest expansion for the world's biggest trading card game left fans on a sour note. Phyrexia: All Will Be One is a major climax for the story that seems to indicate a massive paradigm shift is on the way—in terms of both story, and in-game mechanics.This is Magic: The Gathering's The Empire Strikes Back moment. The bad guys have kicked the good guys' butts across the Multiverse and hope seems to be dead.",
+  666: "If you've been following the progression of Magic: The Gatherings card sets and storyline over the last few months, you know that the latest expansion for the world's biggest trading card game left fans on a sour note. Phyrexia: All Will Be One is a major climax for the story that seems to indicate a massive paradigm shift is on the way—in terms of both story, and in-game mechanics.This is Magic: The Gathering's The Empire Strikes Back moment. The bad guys have kicked the good guys' butts across the Multiverse and hope seems to be dead. Sarah Conor",
 };
 //Auxiliar function for simple friend block list
 const checkList = (mylist, name) => {
@@ -128,17 +129,21 @@ const complex = async (data) => {
   for (const [key, value] of Object.entries(data)) {
     if (key !== undefined && value !== undefined) {
       let st = natural.PorterStemmer.tokenizeAndStem(value, true);
+
+      let doc = nlpc(natural.PorterStemmer.stem(value));
+      let docStr = doc.people().normalize().text();
+
       myDict[key] = {
         language: JSON.stringify(await langcheck(value)),
         root_words: natural.PorterStemmer.tokenizeAndStem(value).slice(0, 10),
         insults: "val",
         spell_check: "val",
         sentiment: analyzer.getSentiment(st),
-        about_who: "", //nlp.string.(value),
+        about_who: docStr, //nlp.string.extractPersonsName("hope seem dead Sarah conor"),
       };
     }
   }
   console.log(myDict);
 };
 
-console.log(complex(realData));
+complex(realData);
