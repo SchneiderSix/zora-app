@@ -1,11 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 
-export const check = (req, res) => {
-  const id = req.params.id;
-  console.log(id);
-  return res(200).json(true);
-};
+
 export const getLikes = (req, res) => {
   const q = "SELECT userId, yes_no FROM likes WHERE postId = ?";
 
@@ -158,3 +154,19 @@ function del(uinfo, postid) {
     }
   );
 }
+
+
+export const check = (req, res) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Not logged in!");
+  const id = req.params.id;
+
+  const q = "SELECT * FROM likes WHERE userId = ? AND (postId = 0 OR postId = 1 OR postId = 2);"
+  db.query(q, [id], (err, data) => {
+    if (err) return res.status(500).json(err)
+    let result = Object.values(JSON.parse(JSON.stringify(data)))
+    var size = Object.keys(result).length;
+    return res.status(200).json(size);
+  })
+};
+

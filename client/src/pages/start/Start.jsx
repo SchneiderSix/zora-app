@@ -16,7 +16,7 @@ const Start = () => {
 
     <div className="start">
       <div className="questionCard">
-        <Question counter={0}/>
+        <Question/>
       </div>
     </div>
   )
