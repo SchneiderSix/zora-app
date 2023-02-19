@@ -12,6 +12,22 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+import langcheck from "langcheck";
+import natural from "natural";
+import nlpc from "compromise/three";
+import SpellChecker from "spellchecker";
+
+import BadWordsNext from "bad-words-next";
+import en from "bad-words-next/data/en.json" assert { type: "json" };
+import es from "bad-words-next/data/es.json" assert { type: "json" };
+import fr from "bad-words-next/data/fr.json" assert { type: "json" };
+import de from "bad-words-next/data/de.json" assert { type: "json" };
+import ru from "bad-words-next/data/ru.json" assert { type: "json" };
+import rl from "bad-words-next/data/ru_lat.json" assert { type: "json" };
+import ua from "bad-words-next/data/ua.json" assert { type: "json" };
+import pl from "bad-words-next/data/pl.json" assert { type: "json" };
+import ch from "bad-words-next/data/ch.json" assert { type: "json" };
+
 const app = express();
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
@@ -109,6 +125,8 @@ app.post("/mix", verifyToken, (req, res) => {
         }
       } else if (algorithm === "complex") {
         try {
+          const data = req.body;
+          complex(data).then((result) => res.json(result));
         } catch (err) {
           res.sendStatus(403);
         }
@@ -291,6 +309,92 @@ const downloadImage = async (url) => {
     writer.on("finish", resolve);
     writer.on("error", reject);
   });
+};
+
+//Complex data
+const complex = async (data) => {
+  const remv = (str) => {
+    let res = "";
+    for (let i of str.split(" ")) {
+      if (!res.includes(i)) res += i + ", ";
+    }
+    return res.substring(0, res.length - 2);
+  };
+  const Analyzer = natural.SentimentAnalyzer;
+  const steemer = natural.PorterStemmer;
+
+  const myDict = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (key !== undefined && value !== undefined) {
+      // Languague
+      let lan = JSON.stringify(await langcheck(value));
+      lan = lan.substring(10, 12);
+      //Sentiment
+      if (lan === "en") {
+        var analyzer = new Analyzer("English", steemer, "afinn");
+      } else if (lan === "es") {
+        var analyzer = new Analyzer("Spanish", steemer, "afinn");
+      } else if (lan === "ja") {
+        var analyzer = new Analyzer("Japanese", steemer, "afinn");
+      } else if (lan === "fr") {
+        var analyzer = new Analyzer("French", steemer, "afinn");
+      } else if (lan === "pt") {
+        var analyzer = new Analyzer("Portuguese", steemer, "afinn");
+      } else if (lan === "it") {
+        var analyzer = new Analyzer("Italian", steemer, "afinn");
+      } else if (lan === "ru") {
+        var analyzer = new Analyzer("Russian", steemer, "afinn");
+      } else if (lan === "de") {
+        var analyzer = new Analyzer("German", steemer, "afinn");
+      } else if (lan === "fi") {
+        var analyzer = new Analyzer("Finnish", steemer, "afinn");
+      } else if (lan === "ar") {
+        var analyzer = new Analyzer("Arabic", steemer, "afinn");
+      } else if (lan === "el") {
+        var analyzer = new Analyzer("Greek", steemer, "afinn");
+      } else {
+        var analyzer = new Analyzer("English", steemer, "afinn");
+      }
+      let st = natural.PorterStemmer.tokenizeAndStem(value, true);
+      //Who
+      let doc = nlpc(natural.PorterStemmer.stem(value));
+      let docStr = doc.people().normalize().text();
+      docStr = remv(docStr);
+
+      //Bad words
+      var badwords = new BadWordsNext();
+      badwords.add(en);
+      badwords.add(es);
+      badwords.add(fr);
+      badwords.add(de);
+      badwords.add(ru);
+      badwords.add(rl);
+      badwords.add(ua);
+      badwords.add(pl);
+      badwords.add(ch);
+      let bv = badwords.filter(value);
+      let counter = 0;
+      for (let i of bv.split(" ")) {
+        if (i === "***") counter++;
+      }
+
+      //Check spelling
+      let spl =
+        lan === "en"
+          ? SpellChecker.getCorrectionsForMisspelling(value)
+          : "Only for English";
+
+      myDict[key] = {
+        language: lan,
+        root_words: natural.PorterStemmer.tokenizeAndStem(value).slice(0, 10),
+        insults: counter,
+        spell_check: spl,
+        sentiment: analyzer.getSentiment(st),
+        about_who: docStr,
+      };
+    }
+  }
+  return myDict;
 };
 
 app.listen(4000, function () {
