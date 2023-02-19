@@ -10,6 +10,8 @@ import {
   aiDice,
   aiSimpleFriend,
   getRecommendedFriends,
+  aiComplex,
+  aiImage,
 } from "../controllers/user.js";
 
 const router = express.Router();
@@ -24,5 +26,7 @@ router.put("/reco/post/:userId/:postId", recommendPost);
 router.put("/reco/friend/:userId/:friendId", recommendedFriend);
 router.post("/", aiDice);
 router.post("/simple", aiSimpleFriend);
+router.post("/imgclassification", aiImage);
+router.post("/complex", aiComplex);
 
 export default router;
