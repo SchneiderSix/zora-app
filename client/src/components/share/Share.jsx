@@ -59,7 +59,7 @@ const Share = () => {
       const dict = {};
       dict["1"] = imgUrl;
       //Like this
-      makeRequest.post("users/imgclassification", dict).then((response => {mutation.mutate({ desc: `${JSON.stringify(response.data)}`, img: imgUrl })}));
+      makeRequest.post("users/imgclassification", dict).then((response => {mutation.mutate({ desc: `${((JSON.stringify(response.data)).substring(2, JSON.stringify(response.data).length - 2)).replace(/"|'/g, '')}?`, img: imgUrl })}));
     } else if (desc==="") {
       return;
     } else {

@@ -117,7 +117,11 @@ app.post("/mix", verifyToken, (req, res) => {
             downloadImage(Object.values(req.body)[0])
               .then(() => classify("images/test.jpg"))
               .then((val) => {
-                res.json(val);
+                let arr = [];
+                for (let i of Object.values(val)) {
+                  arr.push(i["className"]);
+                }
+                res.json(arr);
               });
           }
         } catch (err) {
@@ -275,40 +279,48 @@ const checkList = (mylist, name) => {
 
 //Clasify image
 const classify = async (imagePath) => {
-  const image = fs.readFileSync(imagePath);
-  const decodedImage = tfnode.node.decodeImage(image, 3);
+  try {
+    const image = fs.readFileSync(imagePath);
+    const decodedImage = tfnode.node.decodeImage(image, 3);
 
-  const model = await mobilenet.load();
-  const predictions = await model.classify(decodedImage);
-  fs.unlink("images/" + "test.jpg", (err) => {
-    if (err) {
-      throw err;
-    }
-    console.log("Delete File successfully.");
-  });
-  return predictions;
+    const model = await mobilenet.load();
+    const predictions = await model.classify(decodedImage);
+    fs.unlink("images/" + "test.jpg", (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log("Delete File successfully.");
+    });
+    return predictions;
+  } catch (err) {
+    return false;
+  }
 };
 
 //Download img from internet
 const downloadImage = async (url) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
 
-  const defPath = path.resolve(__dirname, "images", "test.jpg");
-  const writer = fs.createWriteStream(defPath);
+    const defPath = path.resolve(__dirname, "images", "test.jpg");
+    const writer = fs.createWriteStream(defPath);
 
-  const response = await axios({
-    url,
-    method: "GET",
-    responseType: "stream",
-  });
+    const response = await axios({
+      url,
+      method: "GET",
+      responseType: "stream",
+    });
 
-  response.data.pipe(writer);
+    response.data.pipe(writer);
 
-  return new Promise((resolve, reject) => {
-    writer.on("finish", resolve);
-    writer.on("error", reject);
-  });
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+  } catch (err) {
+    return false;
+  }
 };
 
 //Complex data
