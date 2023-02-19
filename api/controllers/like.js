@@ -101,6 +101,22 @@ export const samePostLike = (req, res) => {
   });
 };
 
+/*Get useres that disliked same post*/
+export const samePostDisLike = (req, res) => {
+  const usrId = req.params.usrId;
+  const postId = req.params.postId;
+  const q = `SELECT * FROM posts LEFT JOIN likes ON (posts.id = likes.postId) LEFT JOIN users ON (likes.userId = users.id) WHERE likes.userId!=${usrId} AND likes.postId=${postId} AND likes.yes_no = 0 ORDER BY likes.id DESC LIMIT 5;`;
+
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      //console.log(err);
+    }
+  });
+};
+
 /*Get posts liked by users that liked same post before*/
 export const getSamePostLike = (req, res) => {
   const usId = req.params.usId;
