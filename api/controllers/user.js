@@ -1,6 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
 import qs from "qs";
+import axios from "axios";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
