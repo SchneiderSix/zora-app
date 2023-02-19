@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `website` varchar(45) DEFAULT NULL,
   `recommendedPostIds` json DEFAULT NULL,
   `recommendedFriendIds` json DEFAULT NULL,
+  `blocked` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

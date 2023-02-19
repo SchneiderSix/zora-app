@@ -56,6 +56,8 @@ const Profile = () => {
       if (following){
         makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
           const network = {};
+          //Add bocked users to the network
+          network["block"]= makeRequest.get(`users/blocked/${currentUser.id}`);
           const userFriends = [];
           for (let i of Object.values(res.data)) {
             userFriends.push(i.id);
@@ -85,6 +87,8 @@ const Profile = () => {
       }
       makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
         const network = {};
+        //Add bocked users to the network
+        network["block"]= makeRequest.get(`users/blocked/${currentUser.id}`);
         const userFriends = [];
         for (let i of Object.values(res.data)) {
           userFriends.push(i.id);
@@ -125,6 +129,10 @@ const Profile = () => {
     //window.location.reload();
   };
 
+  const handleBlock = () => {
+    prom(makeRequest.put(`/users/block/${currentUser.id}/${userId}`),makeRequest.delete("/relationships?userId=" + userId),window.location.reload());
+  };
+
   const navigate = useNavigate()
 
   return (
@@ -163,12 +171,16 @@ const Profile = () => {
                 </>
                   
                 : (
+                  <>
                   <button onClick={handleFollow}>
                     {relationshipData.includes(currentUser.id)
                       ? "Following"
                       : "Follow"}
                   </button>
-                )}
+                  <button onClick={()=> handleBlock()}>block</button>
+                  </>
+                )
+                }
               </div>
             </div>
             <Posts userId={userId} />
