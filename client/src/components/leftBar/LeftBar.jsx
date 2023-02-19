@@ -17,6 +17,7 @@ import { useContext } from "react";
 import Friend from "../friends/Friends"
 import { useQuery } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import { fontSize } from "@mui/system";
 const LeftBar = () => {
 
   const { currentUser } = useContext(AuthContext);
@@ -33,14 +34,21 @@ const LeftBar = () => {
       <div className="container">
         <div className="menu">
           <div className="user">
-            
-            <img
-              src={currentUser.profilePic}
-              alt=""
-            />
-            <span>{currentUser.name}</span>
-          </div>
+            <div className="user-info">
+              <div>
+              <img
+                src={currentUser.profilePic}
+                alt=""
+              />
 
+              </div>
+              <div className="online"></div>
+              <span style={{fontSize: "15px"}}>
+                {currentUser.name}
+                </span>
+            </div>
+          </div>
+          <hr />
           {error
           ? "Something went wrong!"
           : isLoading
