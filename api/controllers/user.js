@@ -128,7 +128,7 @@ export const recommendedFriend = (req, res) => {
 /*Insert users into "blocked"*/
 export const blockUser = (req, res) => {
   const userId = req.params.userId;
-  const blockId = req.params.friendId;
+  const blockId = req.params.blockId;
   /*Add recommendedPostId as string (because JSON_SEARCH can search strings not ints and that function is needed to delete specific id from list with many ids) or delete it from array*/
   const q = `UPDATE users SET blocked = CASE WHEN JSON_CONTAINS((select blocked FROM (SELECT blocked FROM users WHERE users.id = ${userId}) AS reco), '["${blockId}"]') = 0 THEN JSON_ARRAY_APPEND(blocked, '$', "${blockId}") WHEN JSON_LENGTH(blocked) = 1 THEN JSON_REMOVE(blocked, '$[0]') ELSE JSON_REMOVE(blocked, REPLACE(JSON_SEARCH(blocked, "one", ${blockId}), '"', '')) END WHERE users.id = ${userId}`;
 

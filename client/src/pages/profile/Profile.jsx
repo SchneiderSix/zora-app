@@ -130,8 +130,7 @@ const Profile = () => {
   };
 
   const handleBlock = () => {
-    makeRequest.put(`/users/block/${currentUser.id}/x`)//.then(()=>{makeRequest.delete("/relationships?userId=" + userId)});
-    .then(() => window.location.reload());
+    makeRequest.put(`/users/block/${currentUser.id}/${userId}`).then(()=>{makeRequest.delete("/relationships?userId=" + userId)}).then(() => window.location.reload());
   };
 
   const navigate = useNavigate()
