@@ -6,10 +6,6 @@ import axios from "axios";
 import { AuthContext } from "../../context/authContext";
 
 const Start = () => {
-  const reRender = () => {
-    // calling the forceUpdate() method
-    this.forceUpdate();
-  };
   const navigate = useNavigate()
   
   return (
