@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int NOT NULL,
-  `desc` varchar(500) DEFAULT NULL,
+  `desc` varchar(512) DEFAULT NULL,
   `img` varchar(200) DEFAULT NULL, /*Put image's name if user upload img to folder 'uploads'*/
   `userid` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,
