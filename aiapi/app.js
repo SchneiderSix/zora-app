@@ -240,7 +240,7 @@ const simpleFriend = (data) => {
     for (let f1 in nu[f]) {
       //console.log("User: " + f + " Friend: " + nu[f][f1]);
       for (let i of data["?" + user]) {
-        if (i === nu[f][f1]) console.log("in original user friend");
+        //if (i === nu[f][f1]) console.log("in original user friend");
       }
       if (
         !checkList(data["?" + user], nu[f][f1]) &&
