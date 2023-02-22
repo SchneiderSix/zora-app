@@ -23,7 +23,6 @@
 * Mateo Bonino
 * Mateo Gallo
 * Matias Rossi
-* Ricardo Danta
 
 
 # Technologies
