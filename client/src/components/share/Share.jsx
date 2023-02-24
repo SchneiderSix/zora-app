@@ -6,6 +6,8 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import socket from '../../index.js';
+
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
@@ -53,6 +55,7 @@ const Share = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     let imgUrl = "";
+    socket.emit('makepost', ('clicked make post'))
     if (file) imgUrl = await upload();
     /*Check if imgUrl is empty and it doesn't creates empty post*/
     if (desc==="") return;

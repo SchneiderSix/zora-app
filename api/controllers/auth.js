@@ -52,9 +52,17 @@ export const register = (req, res) => {
   });
 };
 
-export const login = (req, res) => {
-  const q = "SELECT * FROM users WHERE username = ?";
+async function authSocket() {
+  const response = await fetch('http://localhost:5500', {
+    method: 'POST'
+  });
+  console.log(response);
+  return 'OK';
+}
 
+export const login = async (req, res) => {
+  const q = "SELECT * FROM users WHERE username = ?";
+  authSocket();
   db.query(q, [req.body.username], (err, data) => {
     if (err) return res.status(500).json(err);
     if (data.length === 0) return res.status(404).json("User not found!");

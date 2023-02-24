@@ -15,21 +15,18 @@ import Start from "./pages/start/Start";
 import Search from "./pages/search/Search";
 import Stats from "./pages/stats/Stats";
 import "./style.scss";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import io from 'socket.io-client';
-
-const socket = io.connect('http://localhost:5500');
+import socket from './index.js';
 
 function App() {
   const { currentUser } = useContext(AuthContext);
-  const [username, setUsername] = useState('');
   const { darkMode } = useContext(DarkModeContext);
-
   const queryClient = new QueryClient();
 
+  // socket.emit('this a test', ('this a test'));
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
