@@ -26,7 +26,6 @@ function App() {
   const { darkMode } = useContext(DarkModeContext);
   const queryClient = new QueryClient();
 
-  // socket.emit('this a test', ('this a test'));
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>

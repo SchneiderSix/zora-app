@@ -2,22 +2,31 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server } from 'socket.io';
-import session from 'express-session';
+import { db } from '../api/connect.js';
 
 const PORT = process.env.PORT || 5500;
 const app = express();
+
+class Notification {
+    constructor(sendID, receiverID, type) {
+        this.sendID = sendID;
+        this.receiverID = receiverID;
+        this.type = type;
+    };
+
+    static notifSave() {
+        q = `INSERT INTO notifications (sendID, receiverID, type) VALUES ${this.sendID, this.receiverID, this.type}`;
+        db.query(q, function (error) {
+            if (error) throw error;
+            console.log('inserted into query');
+        });
+    };
+};
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 const server = http.createServer(app);
-const sessionMiddleware = session({
-    secret: 'dontseepls',
-    resave: false,
-    saveUninitialized: false
-});
-
-app.use(sessionMiddleware);
 
 export const io = new Server(server, {
     cors: {
@@ -26,41 +35,32 @@ export const io = new Server(server, {
     }
 });
 
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
-app.post('/authSocket', (req, res) => {
-    req.session.authenticated = true;
-    res.status(204).end();
-})
-
-io.use(wrap(sessionMiddleware));
-
-io.use((socket, next) => {
-    const session = socket.request.session;
-    if (session && session.authenticated) {
-        console.log('Already in session!');
-        next();
-    } else {
-        console.log('not in session >:v');
-        // next(new Error("unauthorized"));
-    }
-});
-
 io.on('connection', (socket) => {
-    const sessionID = socket.request.session.id;
-    socket.join(sessionID);
-    console.log(`Socket running with id: ${socket.id}`);
+    console.log('Socket connecteed!');
 
-    socket.on('this a test', (data) => {
+    socket.on('comment', (data) => {
         console.log(data);
-    })
 
-    socket.on('makepost', (data) => {
-        console.log(data);
-    })
+    });
 
-    socket.on('disconnect', () => {
-        console.log('Socket disconnected :(')
+    socket.on('liked', (socketData) => {
+        console.log('Someone liked your post :$');
+        const q = "SELECT name FROM users WHERE id = ?";
+        const notiText = '';
+        db.query(q, [socketData.senderId], function (error, resp) {
+            if (error) console.log('ERROR: --------------');
+            // console.log(JSON.stringify(data[0]['name']));
+            const name = JSON.stringify(resp[0]['name']);
+            const notiText = `${name} said yes to your post!`;
+            const oq = "SELECT userid FROM posts WHERE id = ?";
+            socket.emit('sendLike', {
+                notiText: notiText,
+                senderId: socketData.senderId,
+                authorid: socketData.authorid
+            });
+            const myNotif = new Notification(socketData.senderId, socketData.authorid, 'said yes to your post!');
+            myNotif.notifSave();
+        })
     });
 })
 
