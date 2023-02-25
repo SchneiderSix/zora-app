@@ -8,6 +8,6 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `name`)
 VALUES (0, "0", "0", "0", "0");
 
 -- create posts
-INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (0, "Are you a human?0", 0);
-INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (1, "Are you a human?1", 0);
-INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (2, "Are you a human?2", 0);
+INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (0, "Do we live in a simulation?", 0);
+INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (1, "Can a person imagine a new color?", 0);
+INSERT INTO `posts` (`id`, `desc`, `userid`) VALUES (2, "Do you believe in strong ideas to generate safety?", 0);
