@@ -12,7 +12,10 @@ import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import * as stringSimilarity from "string-similarity";
-
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
 const Post = ({ post }) => {
 
@@ -169,15 +172,15 @@ const Post = ({ post }) => {
         </div>
         <div className="info">
           <div className="item">
-            {isLoading ? (
+          {isLoading ? (
               "loading"
             ) : chosen != null && chosen == 1 ? (
-              <FavoriteOutlinedIcon
-                style={{ color: "red" }}
+              <ThumbUpAltIcon
+                style={{ color: "#FF1E1E" }}
                 onClick={handleYes}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon
+              <ThumbUpOffAltIcon
               onClick={handleYes}
               />
             )} Yes
@@ -186,12 +189,12 @@ const Post = ({ post }) => {
             {isLoading ? (
               "loading"
               ) : chosen != null && chosen == 0 ? (
-              <FavoriteOutlinedIcon
-                style={{ color: "blue" }}
+              <ThumbDownAltIcon
+                style={{ color: "#1E4BFF" }}
                 onClick={handleNo}
               />
             ) : (
-              <FavoriteBorderOutlinedIcon
+              <ThumbDownOffAltIcon
               onClick={handleNo} 
               />
             )} No
