@@ -72,6 +72,9 @@ app.post("/mix", verifyToken, (req, res) => {
     } else {
       const algorithm = req.headers["algorithm"];
       if (algorithm === "cosine") {
+        //key <?> = original string
+        //soren-dice algorithm
+        //comparision of every value with original string
         try {
           const words = req.body;
           let base = "";
@@ -102,6 +105,9 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "friend") {
+        //first key[0] <original user> = <user friends>
+        //do conexions with friends net, ordering by priority
+        //optional: add blocked list
         try {
           const recommendation = {};
           recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
@@ -110,6 +116,7 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "image") {
+        //download image from url, classify it with tensorflow then delete it
         try {
           if (Object.values(req.body)[1]) {
             res.sendStatus(403);
@@ -128,6 +135,8 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "complex") {
+        //statistics for strings
+        //language, root_words, insults_counter, spell_check, sentiment, about_who
         try {
           const data = req.body;
           complex(data).then((result) => res.json(result));
