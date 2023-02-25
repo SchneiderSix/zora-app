@@ -53,13 +53,13 @@ io.on('connection', (socket) => {
             const name = JSON.stringify(resp[0]['name']);
             const notiText = `${name} said yes to your post!`;
             const oq = "SELECT userid FROM posts WHERE id = ?";
-            socket.emit('sendLike', {
+            socket.emit('sendNotification', {
                 notiText: notiText,
                 senderId: socketData.senderId,
                 authorid: socketData.authorid
             });
-            const myNotif = new Notification(socketData.senderId, socketData.authorid, 'said yes to your post!');
-            myNotif.notifSave();
+            //const myNotif = new Notification(socketData.senderId, socketData.authorid, 'said yes to your post!');
+            //myNotif.notifSave();
         })
     });
 })
