@@ -13,7 +13,7 @@
 </p>
 
 
-  # Dynamic resolutions for your ideas
+# Dynamic resolutions for your ideas
 
 ## Table of Content
 * [Feature](#feature)
