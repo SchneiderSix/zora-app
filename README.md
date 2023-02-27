@@ -1,3 +1,8 @@
+<!-- Output copied to clipboard! -->
+
+<!-----
+
+----->
 
 <p align="center">
    <img src="https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm" />
@@ -5,7 +10,7 @@
 
 
 <p align="center">
-   Dynamic resolutions for your ideas
+  # Dynamic resolutions for your ideas
 <p>
 
 ## Table of Content
