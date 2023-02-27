@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/authContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
+import { socket } from '../../index.js';
 
 const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
@@ -32,6 +33,11 @@ const Comments = ({ postId }) => {
   const handleClick = async (e) => {
     e.preventDefault();
     mutation.mutate({ desc, postId });
+    socket.emit('comment', {
+      content: desc,
+      userId: currentUser.id,
+      postId: postId
+    });
     setDesc("");
   };
 

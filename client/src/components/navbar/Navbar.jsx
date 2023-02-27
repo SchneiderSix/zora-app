@@ -11,16 +11,15 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
-
 import { useState } from "react";
 import { makeRequest } from "../../axios";
 import {useNavigate} from 'react-router-dom';
+import Notification from '../popup/Notification.jsx';
 
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
-
   const [searchInput, setSearchInput] = useState('');
   const navi = useNavigate();
 
@@ -38,7 +37,7 @@ const Navbar = () => {
     navi("/search/" + searchInput, {searchInput})
     return window.location.reload(false)
   }
-  
+
   const reRender = () => {
     // calling the forceUpdate() method
     this.forceUpdate();
@@ -61,6 +60,11 @@ const Navbar = () => {
         <button onClick={ () => searchItems()}><SearchOutlinedIcon style={darkMode ? ({ color: "rgb(110, 199, 157)" }) : ({ color: "black" })}/></button>
       </div>
       <div className="right">
+      <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
+          <PersonOutlinedIcon />
+        </Link>
+        <NotificationsOutlinedIcon/>
+        <div className="user">
 
         <NotificationsOutlinedIcon />
         <div className="user" onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
@@ -68,6 +72,8 @@ const Navbar = () => {
             src={currentUser.profilePic}
             alt={currentUser.profilePic}
           />
+          <Notification />
+          <span>{currentUser.name}</span>
         </div>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
           <span>Logout</span>

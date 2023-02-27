@@ -6,6 +6,8 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
+import socket from '../../index.js';
+
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
@@ -53,6 +55,7 @@ const Share = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     let imgUrl = "";
+    socket.emit('makepost', ('clicked make post'))
     if (file) imgUrl = await upload();
     /*Check if imgUrl exists and desc no for tensorflow class*/
     if (desc==="" && imgUrl) {
@@ -104,12 +107,12 @@ const Share = () => {
               </div>
             </label>
             <div className="item">
-              <img src={Map} alt="" />
-              <span>Add Place</span>
+              {/*<img src={Map} alt="" />*/}
+              {/*<span>Add Place</span>*/}
             </div>
             <div className="item">
-              <img src={Friend} alt="" />
-              <span>Tag Friends</span>
+              {/*<img src={Friend} alt="" />*/}
+              {/*<span>Tag Friends</span>*/}
             </div>
           </div>
           <div className="right">

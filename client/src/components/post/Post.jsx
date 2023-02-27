@@ -12,6 +12,8 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
+import socket from "../..";
+
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
@@ -34,8 +36,6 @@ const Post = ({ post }) => {
   );
 
   const queryClient = useQueryClient();
-
-
 
   const mutation = useMutation(
     (liked) => {
@@ -68,10 +68,18 @@ const Post = ({ post }) => {
         if (data[i][1] == 1) yes++;
         else no++;
       }
-      
+
   const handleYes = () => {
     decision = 1
     mutation.mutate(data.includes(currentUser.id));
+
+    socket.emit('liked', {
+      postId: post.id,
+      decision: 'yes',
+      type: 'like',
+      senderId: currentUser.id,
+      authorid: post.userid
+    });
     /*working in cosine*/
     /*Get feed to don't recommend post from current feed*/
     var currFeedId = [];

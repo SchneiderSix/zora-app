@@ -14,8 +14,7 @@ async function generatePublicUrl(fileId) {
       "838279513253-tf0vb120mogiegp7tkp5147f09mgadhl.apps.googleusercontent.com";
     const CLIENT_SECRET = "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";
     const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-    const REFRESH_TOKEN =
-      "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
+    const REFRESH_TOKEN = "1//04CfJp5cK3XjiCgYIARAAGAQSNwF-L9IrbdKoKzsBrYD7ONfCTTGxCadVr36JNLIdRyrfqx_HgAHIgiN9kDDfNvvOEIZE_EzF51w";
     // Using the credentials to authenticate in Google API
     const oauth2Client = new google.auth.OAuth2(
       CLIENT_ID,
@@ -76,7 +75,7 @@ export async function updatePfp(fileId, filePath, delFile, fileType) {
     version: "v3",
     auth: oauth2Client,
   });
-  console.log("-------------------FILE ID----------------: ", fileId);
+  //console.log("-------------------FILE ID----------------: ", fileId);
   if (delFile) {
     const response = await drive.files.delete({
       fileId: fileId,
@@ -145,14 +144,19 @@ export default async function uploadAuth(filePath, fileType) {
       },
     });
     // console.log(response.data);
-    const urlResp = await generatePublicUrl(response.data.id);
-    if (urlResp.status === "FAILED") {
-      return { status: "FAILED" };
-    }
-
+    const result = await drive.permissions.create({
+      resource: {
+        type: 'anyone',
+        role: 'reader'
+      },
+      fileId: response.data.id,
+      fields: 'id'
+    })
+    //console.log(result);
+    //const urlResp = await generatePublicUrl(response.data.id);
     return {
       status: "OK",
-      fileURL: urlResp.viewLink,
+      fileURL: `https://drive.google.com/uc?id=${response.data.id}`,
       ext: mime.getExtension(file),
     };
     // Here we have to store 'response.data.id' in the DB to store the Image ID
