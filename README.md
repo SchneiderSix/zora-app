@@ -1,8 +1,3 @@
-<!-- Output copied to clipboard! -->
-
-<!-----
-
------>
 
 <p align="center">
    <img src="https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm" />
@@ -14,16 +9,16 @@
 <p>
 
 ## Table of Content
-* [Feature Section](#feature-section)
-* [About Section](#about-section)
+* [Feature](#feature)
+* [About](#about)
 
 
-## Feature Section
+## Feature
 Screenshots
 ### Zora
 API designed to use multiple AI algorithms for any kind of situations, for example compare texts, take information from text,  classify images and find new connections in a network. This repository has a social media to show Zora's flexibility and functionality. This API contains pure JavaScript but in time will get more algorithms, some of them will be implemented in Python.
 
-## About Section
+## About
 At the beginning we wanted to create a social media with a dynamic recommendation system to help users to find what they like easily without the complexity of manipulate big data. So we created a system recommendation with AI algorithms but we flexibilize it building an API specialy for it to convert these AI algorithms multiporpose.
   
 ### Team
