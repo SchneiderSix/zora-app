@@ -1,5 +1,7 @@
 import { db } from "../connect.js";
 import jwt from "jsonwebtoken";
+import qs from "qs";
+import axios from "axios";
 
 export const getUser = (req, res) => {
   const userId = req.params.userId;
@@ -52,7 +54,7 @@ export const getLastFiveUserFriends = (req, res) => {
 //Get recommended friends
 export const getRecommendedFriends = (req, res) => {
   const userId = req.params.userId;
-  const q = `select users.id, users.name, users.profilePic from users where REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%') and users.id not in (SELECT users.id from users left join relationships as r on (users.id=r.followedUserId) WHERE r.followerUserId=${userId})`;
+  const q = `select users.id, users.name, users.profilePic from users where REPLACE(REPLACE(REPLACE(json_extract((SELECT recommendedFriendIds FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%') and users.id not in (SELECT users.id from users left join relationships as r on (users.id=r.followedUserId) WHERE r.followerUserId=${userId}) and users.id not in (select users.id from users where REPLACE(REPLACE(REPLACE(json_extract((SELECT blocked FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%'))`;
   db.query(q, [userId], (err, data) => {
     if (err) return res.status(500).json(err);
     const { password, ...info } = data;
@@ -123,6 +125,34 @@ export const recommendedFriend = (req, res) => {
   });
 };
 
+/*Insert users into "blocked"*/
+export const blockUser = (req, res) => {
+  const userId = req.params.userId;
+  const blockId = req.params.blockId;
+  /*Add recommendedPostId as string (because JSON_SEARCH can search strings not ints and that function is needed to delete specific id from list with many ids) or delete it from array*/
+  const q = `UPDATE users SET blocked = CASE WHEN JSON_CONTAINS((select blocked FROM (SELECT blocked FROM users WHERE users.id = ${userId}) AS reco), '["${blockId}"]') = 0 THEN JSON_ARRAY_APPEND(blocked, '$', "${blockId}") WHEN JSON_LENGTH(blocked) = 1 THEN JSON_REMOVE(blocked, '$[0]') ELSE JSON_REMOVE(blocked, REPLACE(JSON_SEARCH(blocked, "one", ${blockId}), '"', '')) END WHERE users.id = ${userId}`;
+
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      //console.log(err);
+    }
+  });
+};
+
+//Get blocked users
+export const getBlockedUsers = (req, res) => {
+  const userId = req.params.userId;
+  const q = `select users.id from users where REPLACE(REPLACE(REPLACE(json_extract((SELECT blocked FROM users WHERE users.id = ${userId}), '$[*]'), ',', ']'), ' ', '['), '"', '') LIKE CONCAT('%', CONCAT('[', users.id, ']'), '%')`;
+  db.query(q, [userId], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...info } = data;
+    return res.json(info);
+  });
+};
+
 //Call AI API for cosine
 export const aiDice = async (req, res) => {
   let dict = req.body;
@@ -167,6 +197,56 @@ export const aiSimpleFriend = async (req, res) => {
     data: data,
   };
 
+  try {
+    const response = await axios(config);
+    return res.status(200).send(response.data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//Call AI API for complex
+export const aiComplex = async (req, res) => {
+  let dict = req.body;
+  const urlv = "http://localhost:4000/mix";
+
+  var data = qs.stringify(dict);
+  var config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: urlv,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
+      algorithm: "complex",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: data,
+  };
+  try {
+    const response = await axios(config);
+    return res.status(200).send(response.data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+//Call AI API for img classification
+export const aiImage = async (req, res) => {
+  let dict = req.body;
+  const urlv = "http://localhost:4000/mix";
+
+  var data = qs.stringify(dict);
+  var config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: urlv,
+    headers: {
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VycyI6eyJpZCI6MSwibmFtZSI6IkpvaG4iLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifSwiaWF0IjoxNjc2NTUzMDA5fQ.xBM4eR37VXw4iBXNTwDgSteetLTGRvIx43Hj7jCt0Ws`,
+      algorithm: "image",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    data: data,
+  };
   try {
     const response = await axios(config);
     return res.status(200).send(response.data);

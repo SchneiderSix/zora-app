@@ -12,6 +12,22 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
+import langcheck from "langcheck";
+import natural from "natural";
+import nlpc from "compromise/three";
+import SpellChecker from "spellchecker";
+
+import BadWordsNext from "bad-words-next";
+import en from "bad-words-next/data/en.json" assert { type: "json" };
+import es from "bad-words-next/data/es.json" assert { type: "json" };
+import fr from "bad-words-next/data/fr.json" assert { type: "json" };
+import de from "bad-words-next/data/de.json" assert { type: "json" };
+import ru from "bad-words-next/data/ru.json" assert { type: "json" };
+import rl from "bad-words-next/data/ru_lat.json" assert { type: "json" };
+import ua from "bad-words-next/data/ua.json" assert { type: "json" };
+import pl from "bad-words-next/data/pl.json" assert { type: "json" };
+import ch from "bad-words-next/data/ch.json" assert { type: "json" };
+
 const app = express();
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
@@ -56,6 +72,9 @@ app.post("/mix", verifyToken, (req, res) => {
     } else {
       const algorithm = req.headers["algorithm"];
       if (algorithm === "cosine") {
+        //key <?> = original string
+        //soren-dice algorithm
+        //comparision of every value with original string
         try {
           const words = req.body;
           let base = "";
@@ -86,6 +105,9 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "friend") {
+        //first key[0] <original user> = <user friends>
+        //do conexions with friends net, ordering by priority
+        //optional: add blocked list
         try {
           const recommendation = {};
           recommendation[Object.keys(req.body)[0]] = simpleFriend(req.body);
@@ -94,6 +116,7 @@ app.post("/mix", verifyToken, (req, res) => {
           res.sendStatus(403);
         }
       } else if (algorithm === "image") {
+        //download image from url, classify it with tensorflow then delete it
         try {
           if (Object.values(req.body)[1]) {
             res.sendStatus(403);
@@ -101,14 +124,22 @@ app.post("/mix", verifyToken, (req, res) => {
             downloadImage(Object.values(req.body)[0])
               .then(() => classify("images/test.jpg"))
               .then((val) => {
-                res.json(val);
+                let arr = [];
+                for (let i of Object.values(val)) {
+                  arr.push(i["className"]);
+                }
+                res.json(arr);
               });
           }
         } catch (err) {
           res.sendStatus(403);
         }
       } else if (algorithm === "complex") {
+        //statistics for strings
+        //language, root_words, insults_counter, spell_check, sentiment, about_who
         try {
+          const data = req.body;
+          complex(data).then((result) => res.json(result));
         } catch (err) {
           res.sendStatus(403);
         }
@@ -218,7 +249,7 @@ const simpleFriend = (data) => {
     for (let f1 in nu[f]) {
       //console.log("User: " + f + " Friend: " + nu[f][f1]);
       for (let i of data["?" + user]) {
-        if (i === nu[f][f1]) console.log("in original user friend");
+        //if (i === nu[f][f1]) console.log("in original user friend");
       }
       if (
         !checkList(data["?" + user], nu[f][f1]) &&
@@ -257,40 +288,134 @@ const checkList = (mylist, name) => {
 
 //Clasify image
 const classify = async (imagePath) => {
-  const image = fs.readFileSync(imagePath);
-  const decodedImage = tfnode.node.decodeImage(image, 3);
+  try {
+    const image = fs.readFileSync(imagePath);
+    const decodedImage = tfnode.node.decodeImage(image, 3);
 
-  const model = await mobilenet.load();
-  const predictions = await model.classify(decodedImage);
-  fs.unlink("images/" + "test.jpg", (err) => {
-    if (err) {
-      throw err;
-    }
-    console.log("Delete File successfully.");
-  });
-  return predictions;
+    const model = await mobilenet.load();
+    const predictions = await model.classify(decodedImage);
+    fs.unlink("images/" + "test.jpg", (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log("Delete File successfully.");
+    });
+    return predictions;
+  } catch (err) {
+    return false;
+  }
 };
 
 //Download img from internet
 const downloadImage = async (url) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
 
-  const defPath = path.resolve(__dirname, "images", "test.jpg");
-  const writer = fs.createWriteStream(defPath);
+    const defPath = path.resolve(__dirname, "images", "test.jpg");
+    const writer = fs.createWriteStream(defPath);
 
-  const response = await axios({
-    url,
-    method: "GET",
-    responseType: "stream",
-  });
+    const response = await axios({
+      url,
+      method: "GET",
+      responseType: "stream",
+    });
 
-  response.data.pipe(writer);
+    response.data.pipe(writer);
 
-  return new Promise((resolve, reject) => {
-    writer.on("finish", resolve);
-    writer.on("error", reject);
-  });
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+  } catch (err) {
+    return false;
+  }
+};
+
+//Complex data
+const complex = async (data) => {
+  const remv = (str) => {
+    let res = "";
+    for (let i of str.split(" ")) {
+      if (!res.includes(i)) res += i + ", ";
+    }
+    return res.substring(0, res.length - 2);
+  };
+  const Analyzer = natural.SentimentAnalyzer;
+  const steemer = natural.PorterStemmer;
+
+  const myDict = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (key !== undefined && value !== undefined) {
+      // Languague
+      let lan = JSON.stringify(await langcheck(value));
+      lan = lan.substring(10, 12);
+      //Sentiment
+      if (lan === "en") {
+        var analyzer = new Analyzer("English", steemer, "afinn");
+      } else if (lan === "es") {
+        var analyzer = new Analyzer("Spanish", steemer, "afinn");
+      } else if (lan === "ja") {
+        var analyzer = new Analyzer("Japanese", steemer, "afinn");
+      } else if (lan === "fr") {
+        var analyzer = new Analyzer("French", steemer, "afinn");
+      } else if (lan === "pt") {
+        var analyzer = new Analyzer("Portuguese", steemer, "afinn");
+      } else if (lan === "it") {
+        var analyzer = new Analyzer("Italian", steemer, "afinn");
+      } else if (lan === "ru") {
+        var analyzer = new Analyzer("Russian", steemer, "afinn");
+      } else if (lan === "de") {
+        var analyzer = new Analyzer("German", steemer, "afinn");
+      } else if (lan === "fi") {
+        var analyzer = new Analyzer("Finnish", steemer, "afinn");
+      } else if (lan === "ar") {
+        var analyzer = new Analyzer("Arabic", steemer, "afinn");
+      } else if (lan === "el") {
+        var analyzer = new Analyzer("Greek", steemer, "afinn");
+      } else {
+        var analyzer = new Analyzer("English", steemer, "afinn");
+      }
+      let st = natural.PorterStemmer.tokenizeAndStem(value, true);
+      //Who
+      let doc = nlpc(natural.PorterStemmer.stem(value));
+      let docStr = doc.people().normalize().text();
+      docStr = remv(docStr);
+
+      //Bad words
+      var badwords = new BadWordsNext();
+      badwords.add(en);
+      badwords.add(es);
+      badwords.add(fr);
+      badwords.add(de);
+      badwords.add(ru);
+      badwords.add(rl);
+      badwords.add(ua);
+      badwords.add(pl);
+      badwords.add(ch);
+      let bv = badwords.filter(value);
+      let counter = 0;
+      for (let i of bv.split(" ")) {
+        if (i === "***") counter++;
+      }
+
+      //Check spelling
+      let spl =
+        lan === "en"
+          ? SpellChecker.getCorrectionsForMisspelling(value)
+          : "Only for English";
+
+      myDict[key] = {
+        language: lan,
+        root_words: natural.PorterStemmer.tokenizeAndStem(value).slice(0, 10),
+        insults: counter,
+        spell_check: spl,
+        sentiment: analyzer.getSentiment(st),
+        about_who: docStr,
+      };
+    }
+  }
+  return myDict;
 };
 
 app.listen(4000, function () {

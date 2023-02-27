@@ -13,13 +13,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `website` varchar(45) DEFAULT NULL,
   `recommendedPostIds` json DEFAULT NULL,
   `recommendedFriendIds` json DEFAULT NULL,
+  `blocked` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `posts` (
   `id` int NOT NULL,
-  `desc` varchar(200) DEFAULT NULL,
+  `desc` varchar(512) DEFAULT NULL,
   `img` varchar(200) DEFAULT NULL, /*Put image's name if user upload img to folder 'uploads'*/
   `userid` int NOT NULL,
   `createdAt` datetime DEFAULT NULL,

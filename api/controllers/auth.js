@@ -32,7 +32,7 @@ export const register = (req, res) => {
     } while (redo == 1);
 
     const q =
-      "INSERT INTO users (`id`, `username`,`email`,`password`,`name`,`recommendedPostIds`,`recommendedFriendIds`) VALUE (?)";
+      "INSERT INTO users (`id`, `username`,`email`,`password`,`name`,`recommendedPostIds`,`recommendedFriendIds`,`blocked`) VALUE (?)";
 
     const values = [
       uid,
@@ -41,6 +41,7 @@ export const register = (req, res) => {
       hashedPassword,
       req.body.name,
       /*Set empty array for "recommendedPostIds" and "recommendedFriendIds". Needed to append ids*/
+      "[]",
       "[]",
       "[]",
     ];

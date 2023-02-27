@@ -29,19 +29,7 @@ const RightBar = () => {
     <div className="rightBar">
       <div className="container">
         <div className="item">
-          <span>Friends</span>
-            {error
-          ? "Something went wrong!"
-          : isLoading
-          ? "loading"
-          : Object.entries(data).map(([key, value]) => {
-            return <Friend friend={value} key={value.id}/>
-        })}
-        </div>
-      </div>
-      <div className="container">
-        <div className="item">
-          <span>Recommended Friends</span>
+          <span>Recommended friends</span>
           {err
           ? "Something went wrong!"
           : load

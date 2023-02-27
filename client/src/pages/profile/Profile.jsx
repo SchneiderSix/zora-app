@@ -49,6 +49,12 @@ const Profile = () => {
     const res2 = re2;
     await Promise.all([res1, res2]);
   }
+  const prom3 = async (re1, re2, re3) =>{
+    const res1 = re1;
+    const res2 = re2;
+    const res3 = re3;
+    await Promise.all([res1, res2, res3]);
+  }
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -56,6 +62,8 @@ const Profile = () => {
       if (following){
         makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
           const network = {};
+          //Add bocked users to the network
+          network["block"]= makeRequest.get(`users/blocked/${currentUser.id}`);
           const userFriends = [];
           for (let i of Object.values(res.data)) {
             userFriends.push(i.id);
@@ -85,6 +93,8 @@ const Profile = () => {
       }
       makeRequest.get("/users/find/friends/" + currentUser.id).then((res) => {
         const network = {};
+        //Add bocked users to the network
+        network["block"]= makeRequest.get(`users/blocked/${currentUser.id}`);
         const userFriends = [];
         for (let i of Object.values(res.data)) {
           userFriends.push(i.id);
@@ -101,7 +111,7 @@ const Profile = () => {
           //Last iteration
           if (i === userFriends[userFriends.length - 1]) {
             makeRequest.post(`/users/simple`, network).then((response) => {
-              prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
+              prom3(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
               makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
               window.location.reload()
               );
@@ -123,6 +133,10 @@ const Profile = () => {
   const handleFollow = () => {
     mutation.mutate(relationshipData.includes(currentUser.id));
     //window.location.reload();
+  };
+
+  const handleBlock = () => {
+    makeRequest.put(`/users/block/${currentUser.id}/${userId}`).then(()=>{makeRequest.delete("/relationships?userId=" + userId)}).then(() => window.location.reload());
   };
 
   const navigate = useNavigate()
@@ -163,12 +177,16 @@ const Profile = () => {
                 </>
                   
                 : (
+                  <>
                   <button onClick={handleFollow}>
                     {relationshipData.includes(currentUser.id)
                       ? "Following"
                       : "Follow"}
                   </button>
-                )}
+                  <button onClick={handleBlock}>block</button>
+                  </>
+                )
+                }
               </div>
             </div>
             <Posts userId={userId} />

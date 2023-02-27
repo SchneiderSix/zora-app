@@ -13,22 +13,25 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 
 const BtnSbmtFQ = () => {
-    const navigate = useNavigate()
-    const { currentUser } = useContext(AuthContext);
-    const { isLoading, error, data } = useQuery(["likes"], () =>
-    makeRequest.get("/likes/check-first-questions/" + currentUser.id).then((res) => {
-      return res.data
+  
+  const navigate = useNavigate()
+  const reRender = () => {
+    // calling the forceUpdate() method
+    this.forceUpdate();
+  };
+  const { currentUser } = useContext(AuthContext);
+  function check(){
+    makeRequest.get("/likes/check-first-questions/" + currentUser.id)
+    .then((res) => {
+      if (res.data === 3) return navigate("/")
     })
-    )
-    return (
-        <button onClick={() =>check()}> Submit </button>
-    )
+  }
+  return (
+    <>
+      <button onClick={() =>check()}>Submit</button>
+    </>
+  )
 
-
-    function check() {
-        error ? console.log(error) : isLoading ? console.log(isLoading) :
-        navigate("/")
-    }
 }
 
 

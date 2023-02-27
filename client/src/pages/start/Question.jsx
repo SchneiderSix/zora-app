@@ -13,6 +13,7 @@ import BtnSbmtFQ from "./BtnSbmtFQ"
 
 const Question = ({counter}) => {
 
+  
   const { currentUser } = useContext(AuthContext);
   const { isLoading, error, data } = useQuery(["posts"], () =>
     makeRequest.get("/posts/first-questions").then((res) => {

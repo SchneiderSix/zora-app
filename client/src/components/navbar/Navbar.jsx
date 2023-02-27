@@ -57,7 +57,7 @@ const Navbar = () => {
       </div>
       <div className="search">
         <input type="text" placeholder="Search users or posts..." onChange={(e) => setSearchInput(e.target.value)}></input>
-        <button onClick={ () => searchItems()}><SearchOutlinedIcon /></button>
+        <button onClick={ () => searchItems()}><SearchOutlinedIcon style={darkMode ? ({ color: "rgb(110, 199, 157)" }) : ({ color: "black" })}/></button>
       </div>
       <div className="right">
       <Link style={darkMode ? ({ color: "white" }) : ({ color: "black" })} onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
@@ -65,16 +65,19 @@ const Navbar = () => {
         </Link>
         <NotificationsOutlinedIcon/>
         <div className="user">
+
+        <NotificationsOutlinedIcon />
+        <div className="user" onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
           <img
             src={currentUser.profilePic}
             alt={currentUser.profilePic}
           />
           <Notification />
           <span>{currentUser.name}</span>
+        </div>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
           <span>Logout</span>
         </Link>
-        </div>
       </div>
     </div>
   );

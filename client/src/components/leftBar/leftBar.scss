@@ -22,7 +22,6 @@
       padding: 20px;
 
       hr {
-        margin: 20px 0px;
         border: none;
         height: 0.5px;
         background-color: themed("border");
@@ -40,34 +39,75 @@
         .user {
           display: flex;
           align-items: center;
-          gap: 10px;
+          justify-content: space-between;
+          margin: 20px 0px;
 
-          img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
+            #logged-user{
+              cursor: default;
+            }
+  
+            .user-info{
+              display: flex;
+              align-items: center;
+              gap: 20px;
+              position: relative;
+  
+              div{
+                img {
+                  border-radius: 50%;
+                  width: 40px;
+                  height: 40px;
+                  object-fit: cover;
+                }
 
-          span {
-            font-size: 14px;
-          }
-        }
+              }
+  
+              .online {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: limegreen;
+                position: absolute;
+                top: 0;
+                left: 30px;
+              }
+  
+              p {
+                color: themed("textColorSoft");
+              }
+  
+              span {
+                font-weight: 500;
+                color: themed("textColor");
+              }
+            }
 
-        .item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-
-          img {
-            width: 30px;
-          }
-
-          span {
-            font-size: 14px;
+            .user-info:hover{
+              cursor: pointer;
+            }
+  
+            .buttons {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+  
+              button {
+                border: none;
+                padding: 5px;
+                color: white;
+                cursor: pointer;
+  
+                &:first-child {
+                  background-color: #5271ff;
+                }
+  
+                &:last-child {
+                  background-color: #f0544f;
+                }
+              }
+            }
           }
         }
       }
     }
   }
-}

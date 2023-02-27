@@ -31,6 +31,20 @@ export const getPosts = (req, res) => {
   });
 };
 
+//Get last 10 posts from user
+export const getLast10Posts = (req, res) => {
+  const userId = req.params.userId;
+  const q = `select posts.id, posts.desc from posts where posts.userid = ${userId} order by posts.id desc limit 10`;
+  db.query(q, (err, data) => {
+    try {
+      const { password, ...info } = data;
+      return res.json(info);
+    } catch (err) {
+      //console.log(err);
+    }
+  });
+};
+
 export const getAllPosts = (req, res) => {
   const userId = req.query.userId;
   const token = req.cookies.accessToken;
