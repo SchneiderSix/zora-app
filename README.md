@@ -4,14 +4,16 @@
 
 ----->
 
+
+
+
+
 <p align="center">
    <img src="https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm" />
 </p>
 
 
-<p align="center">
   # Dynamic resolutions for your ideas
-<p>
 
 ## Table of Content
 * [Feature](#feature)
