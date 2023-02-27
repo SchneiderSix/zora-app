@@ -26,6 +26,8 @@ API designed to use multiple AI algorithms for any kind of situations, for examp
 ## About Section
 At the beginning we wanted to create a social media with a dynamic recommendation system to help users to find what they like easily without the complexity of manipulate big data. So we created a system recommendation with AI algorithms but we flexibilize it building an API specialy for it to convert these AI algorithms multiporpose.
   
+### Team
+   
 Mateo Bonino: [Github](https://github.com/mateobonino), [LinkedIn](https://www.linkedin.com/in/mateo-bonino-51aa96242/)
    
 Mateo Gallo: [Github](https://github.com/gallit0), [LinkedIn](https://www.linkedin.com/in/mateo-gallo-b46a90241/)
