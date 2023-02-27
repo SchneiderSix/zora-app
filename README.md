@@ -6,69 +6,34 @@
 
 
 
-# 
+
 
 <p align="center">
    <img src="https://drive.google.com/uc?export=view&id=1TeYkzMwXDSVYZ8gyqNrv5f1U0UJJtntm" />
 </p>
 
 
-## Dynamic social media between your likes
+  # Dynamic resolutions for your ideas
+
+## Table of Content
+* [Feature](#feature)
+* [About](#about)
 
 
-# Team
+## Feature
+Screenshots
+### Zora
+API designed to use multiple AI algorithms for any kind of situations, for example compare texts, take information from text,  classify images and find new connections in a network. This repository has a social media to show Zora's flexibility and functionality. This API contains pure JavaScript but in time will get more algorithms, some of them will be implemented in Python.
 
+## About
+At the beginning we wanted to create a social media with a dynamic recommendation system to help users to find what they like easily without the complexity of manipulate big data. So we created a system recommendation with AI algorithms but we flexibilize it building an API specialy for it to convert these AI algorithms multiporpose.
+  
+### Team
+   
+Mateo Bonino: [Github](https://github.com/mateobonino), [LinkedIn](https://www.linkedin.com/in/mateo-bonino-51aa96242/)
+   
+Mateo Gallo: [Github](https://github.com/gallit0), [LinkedIn](https://www.linkedin.com/in/mateo-gallo-b46a90241/)
+   
+Matias Rossi: [Github](https://github.com/SchneiderSix), [LinkedIn](https://www.linkedin.com/in/jmrossi6/)
 
-
-* Mateo Bonino
-* Mateo Gallo
-* Matias Rossi
-
-
-# Technologies
-
-
-
-* Node@18.12.1
-* Node Express@4.18.2
-* Node React@18.2.0
-    * At the beginning we wanted to create a project in Flask + Django logic but we chose React when we saw all the things that you can create with it, also it is very used in industry. Then we changed Flask to Express because Express is from Node and is faster than Flask.
-* Nodemon@2.0.20
-* MySQL@2.18.1
-* Yarn@1.22.19
-* Google Cloud API
-* Socket.io
-* Axios@1.2.2
-* Bcryptjs@2.4.3
-* Pandas
-* Scikit-learn
-* HTML
-* CSS
-* JavaScript
-* Python@3.10.9
-
-
-# Challenge
-
-
-This project is going to be a social media network. Posts, votes (yes, no),  chat and create a system recommendation with AI using cosine similarity.
-
-
-# Risks
-
-
-The principal risks are uploading a virus when making a post and SQL Injections.
-
-
-# Infrastructure
-
-
-We made an API that communicates with the MySQL Database using the Axios method for every request. When the User is registered the password is Hashed with Salt from Bcryptjs. Every time a User Logins a var called “AuthContext” (made with a mix between hooks useContext and useState) is going to help to locate the current User with his data (posts, friends, etc).
-
-
-# Existing Solutions
-
-
-
-* Twitter
-* Reddit
+[Repository](https://github.com/SchneiderSix/zora-app)
