@@ -66,13 +66,12 @@ const Navbar = () => {
         <NotificationsOutlinedIcon/>
         <div className="user">
 
-        <NotificationsOutlinedIcon />
         <div className="user" onClick={() => navi("/profile/" + currentUser.id).then(()=> reRender())}>
+          <Notification />
           <img
             src={currentUser.profilePic}
             alt={currentUser.profilePic}
           />
-          <Notification />
           <span>{currentUser.name}</span>
         </div>
           <Link to="/login" style={darkMode ? ({ color: "white", textDecoration: "none" }) : ({ color: "black", textDecoration: "none" })}>
@@ -80,6 +79,7 @@ const Navbar = () => {
         </Link>
       </div>
     </div>
+  </div>
   );
 };
 

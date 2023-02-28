@@ -81,9 +81,12 @@ const Profile = () => {
             //Last iteration
             if (i === userFriends[userFriends.length - 1]) {
               makeRequest.post(`/users/simple`, network).then((response) => {
-                prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
-                window.location.reload()
+                for (let rec in Object.values(response.data["recommendation"])[0]) {
+
+                prom(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0][rec]}`),
+                //window.location.reload()
                 );
+                }
               });
             }
           });
@@ -111,10 +114,12 @@ const Profile = () => {
           //Last iteration
           if (i === userFriends[userFriends.length - 1]) {
             makeRequest.post(`/users/simple`, network).then((response) => {
-              prom3(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
-              makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0]}`),
-              window.location.reload()
+              for (let rec in Object.values(response.data["recommendation"])[0]) {
+              prom3(makeRequest.put(`/users/reco/friend/${currentUser.id}/${Object.values(response.data["recommendation"])[0][rec]}`),
+              //makeRequest.put(`/users/checkreco/${currentUser.id}/${Object.values(response.data["recommendation"])[0][rec]}`),
+              //window.location.reload()
               );
+              }
             });
           }
         });
@@ -125,8 +130,9 @@ const Profile = () => {
     {
       onSuccess: () => {
         // Invalidate and refetch
-        queryClient.invalidateQueries(["relationship"]);
+        queryClient.invalidateQueries(["relationship"]).then(() => {window.location.reload()});
       },
+      
     }
   );
 

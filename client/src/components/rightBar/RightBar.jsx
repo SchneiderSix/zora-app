@@ -28,8 +28,8 @@ const RightBar = () => {
   return (
     <div className="rightBar">
       <div className="container">
-        <div className="item">
-          <span>Recommended friends</span>
+        <div className="menu">
+          <p>Recommended Users</p>
           {err
           ? "Something went wrong!"
           : load

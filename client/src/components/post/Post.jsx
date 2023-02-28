@@ -248,8 +248,8 @@ const Post = ({ post }) => {
             See Comments
           </div>
           <div className="item">
-            <ShareOutlinedIcon />
-            Share
+            {/*<ShareOutlinedIcon />
+            Share*/}
           </div>
         </div>
         {commentOpen && <Comments postId={post.id} />}

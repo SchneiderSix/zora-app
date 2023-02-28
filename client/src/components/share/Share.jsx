@@ -58,7 +58,7 @@ const Share = () => {
     socket.emit('makepost', ('clicked make post'))
     if (file) imgUrl = await upload();
     /*Check if imgUrl exists and desc no for tensorflow class*/
-    if (desc==="" && imgUrl) {
+    if (desc==="" && imgUrl && !file.name.endsWith("gif") ) {
       const dict = {};
       dict["1"] = imgUrl;
       //Like this
