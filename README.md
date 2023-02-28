@@ -21,7 +21,19 @@
 
 
 ## Feature
-Screenshots
+
+<p align="center">
+   <img src="https://drive.google.com/uc?id=1zkuXBJTsjrProWR8EPyLfxSdiFzMt4yH" />
+</p>
+
+<p align="center">
+   <img src="https://drive.google.com/uc?id=1uohrDDAB2Bj_aM1NSbRUnDww1vGVLtbq" />
+</p>
+
+<p align="center">
+   <img src="https://drive.google.com/uc?id=1IBwPfOGFsp5H-NNOlzobOp1onrKnbxj6" />
+</p>
+
 ### Zora
 API designed to use multiple AI algorithms for any kind of situations, for example compare texts, take information from text,  classify images and find new connections in a network. This repository has a social media to show Zora's flexibility and functionality. This API contains pure JavaScript but in time will get more algorithms, some of them will be implemented in Python.
 
